@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Brand palette from image ===
+- Primary (logo red):        #E11D2E  rgb(225 29 46)
+- Charcoal / metal:          #212427  rgb(33 36 39)
+- Moss green (foliage):      #274F36  rgb(39 79 54)
+- Fresh leaf highlight:      #88BE63  rgb(136 190 99)
+- Warm light neutral:        #F5F5F4  rgb(245 245 244)
+- Stone secondary neutral:   #E7E5E4  rgb(231 229 228)
+- On-light text:             #111418  rgb(17 20 24)
+- Muted text:                #6C737D  rgb(108 115 125)
+*/
+
+:root {
+  --color-primary: 225 29 46;     /* #E11D2E */
+  --color-secondary: 33 36 39;    /* #212427 */
+  --color-accent: 39 79 54;       /* #274F36 */
+  --color-accent-2: 136 190 99;   /* #88BE63 */
+  --color-bg: 245 245 244;        /* #F5F5F4 */
+  --color-bg-secondary: 231 229 228; /* #E7E5E4 */
+  --color-surface: 255 255 255;   /* #FFFFFF */
+  --color-text: 17 20 24;         /* #111418 */
+  --color-text-muted: 108 115 125;/* #6C737D */
+}
+
+html.dark {
+  --color-primary: 255 77 86;
+  --color-secondary: 48 52 57;
+  --color-accent: 56 107 77;
+  --color-accent-2: 160 214 120;
+  --color-bg: 14 16 18;
+  --color-bg-secondary: 22 25 28;
+  --color-surface: 28 32 36;
+  --color-text: 243 244 246;
+  --color-text-muted: 156 163 175;
+}
+
+.dark {
+  /* Lifted/luminous variants for dark UI */
+  --color-primary: 255 77 86;     /* #FF4D56 */
+  --color-secondary: 48 52 57;    /* #303439 */
+  --color-accent: 56 107 77;      /* #386B4D */
+  --color-accent-2: 160 214 120;  /* #A0D678 */
+  --color-bg: 14 16 18;           /* #0E1012 */
+  --color-bg-secondary: 22 25 28; /* #16191C */
+  --color-surface: 28 32 36;      /* #1C2024 */
+  --color-text: 243 244 246;      /* #F3F4F6 */
+  --color-text-muted: 156 163 175;/* #9CA3AF */
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  body {
+    @apply bg-bg text-text antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    line-height: 1.2;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg font-medium transition-colors hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-colors hover:opacity-90;
+  }
+  .btn-outline {
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors;
+  }
+  .card {
+    @apply bg-surface rounded-xl shadow-lg p-6 border border-gray-100 dark:border-white/5;
+  }
+  .glass {
+    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes bounceSubtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
