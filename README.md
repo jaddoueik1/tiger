@@ -1,6 +1,6 @@
-# Tiger Muay Thai - Complete Gym Management Website
+# Apex MMA - Complete Gym Management Website
 
-A production-ready MMA gym website built with Next.js frontend and Express.js backend. Features class booking, e-commerce, private training scheduling, and comprehensive admin tools.
+A production-ready MMA gym website built with Next.js and an API-first architecture. Features class booking, e-commerce, private training scheduling, and comprehensive admin tools.
 
 ## 🎨 Color Palette (Extracted from Gym Images)
 
@@ -32,69 +32,51 @@ The color system is based on authentic gym imagery:
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB (local or cloud)
+- Node.js 18+ 
 - npm or yarn
 
 ### Installation
 
-1. **Clone and install all dependencies**:
+1. **Clone and install dependencies**:
    ```bash
    git clone <repository-url>
-   cd tiger-muay-thai
-   npm run install:all
+   cd mma-gym-website
+   npm install
    ```
 
-2. **Environment setup for both frontend and server**:
+2. **Environment setup**:
    ```bash
-   cp frontend/.env.example frontend/.env
-   cp server/.env.example server/.env
-   # Edit both .env files with your configuration
+   cp .env.example .env
+   # Edit .env with your configuration
    ```
 
-3. **Start MongoDB** (if running locally):
-   ```bash
-   mongod
-   ```
-
-4. **Seed the database**:
-   ```bash
-   npm run seed
-   ```
-
-5. **Start development servers**:
+3. **Start development servers**:
    ```bash
    npm run dev
    ```
-   This starts both the Next.js frontend (port 3000) and Express.js API server (port 3001).
+   This starts both the Next.js frontend (port 3000) and Express API server (port 3001).
 
 ## 📁 Project Structure
 
 ```
-├── frontend/                     # Next.js frontend application
-│   ├── src/
+├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   ├── components/               # Reusable UI components
 │   ├── hooks/                    # Custom React hooks
 │   ├── lib/                      # Utilities and configurations
-│   ├── store/                    # State management (Zustand)
-│   └── styles/                   # Global styles and Tailwind
-├── server/                       # Express.js API server  
-│   ├── config/                   # Database and app configuration
-│   ├── data/                     # Seed data files
-│   ├── models/                   # MongoDB/Mongoose models
+│   └── store/                    # State management (Zustand)
+├── server/                       # Express.js API server
+│   ├── data/                     # Mock data and seed files
 │   ├── routes/                   # API route handlers
-│   ├── seeders/                  # Database seeders
-│   ├── services/                 # Business logic layer
 │   └── types/                    # TypeScript type definitions
+└── public/                       # Static assets
 ```
 
 ## 🛠 API Documentation
 
 ### Development
-- **Swagger UI**: http://localhost:3001/api/docs  
+- **Swagger UI**: http://localhost:3001/api/docs
 - **Health Check**: http://localhost:3001/health
-- **Frontend**: http://localhost:3000
 
 ### Key Endpoints
 
@@ -182,54 +164,44 @@ Use these test cards in checkout:
 
 ### Development
 ```bash
-npm run dev              # Start both frontend and server
-npm run dev:frontend     # Frontend only (Next.js)
-npm run dev:server       # Server only (Express.js)
+npm run dev          # Start both frontend and API
+npm run dev:next     # Frontend only
+npm run dev:api      # API only
 ```
 
 ### Production Build
 ```bash
-npm run build            # Build both frontend and server
-npm run start            # Start both in production mode
+npm run build        # Build optimized frontend
+npm start           # Start production server
 ```
 
-### Database Operations
+### Docker Deployment
 ```bash
-npm run seed             # Seed database with sample data
+docker-compose up --build
 ```
 
 ## 🔧 Configuration
 
 ### Environment Variables
-See `frontend/.env.example` and `server/.env.example` for configuration. Key variables:
+See `.env.example` for all required configuration. Key variables:
 
-**Server:**
-- `MONGODB_URI`: MongoDB connection string
 - `JWT_SECRET`: Secure token for authentication
 - `STRIPE_SECRET_KEY`: Stripe payments (test mode)
+- `DATABASE_URL`: Database connection (SQLite for development)
 - `FRONTEND_URL`: CORS configuration
 - `SMTP_*`: Email service configuration
-
-**Frontend:**
-- `NEXT_PUBLIC_API_URL`: Backend API URL
-- `NEXT_PUBLIC_FRONTEND_URL`: Frontend URL for redirects
 
 ### Customization
 
 #### Branding
-- Update logo in `frontend/src/components/layout/Header.tsx`
-- Modify color palette in `frontend/tailwind.config.js` and `frontend/src/styles/globals.css`
+- Update logo in `src/components/layout/Header.tsx`
+- Modify color palette in `tailwind.config.js` and `src/styles/globals.css`
 - Edit content via `/content` API endpoints
 
 #### Payment Processing
 - Configure Stripe webhooks in production
-- Update pricing in `server/data/memberships.ts`  
-- Customize checkout flow in frontend shop components
-
-#### Database
-- Modify models in `server/models/`
-- Update seeders in `server/seeders/`
-- Add new API endpoints in `server/routes/`
+- Update pricing in `server/data/memberships.ts`
+- Customize checkout flow in shop components
 
 ## 📚 Additional Resources
 
