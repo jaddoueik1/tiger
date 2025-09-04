@@ -173,6 +173,11 @@ export function buildWhatsAppMessage(
     total: string;
     currency: string;
   }
+
+  // Membership Plans API
+  async getMembershipPlans() {
+    return this.request<any>('/memberships/plans');
+  }
 ) {
   const fallback =
     `Hello, I'd like to place an order.\n\n` +
@@ -279,3 +284,12 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
     isConfigLoading,
   };
 }
+
+// Membership Plans hook
+export const useMembershipPlans = () => {
+  return useQuery({
+    queryKey: ['membership-plans'],
+    queryFn: () => apiClient.getMembershipPlans(),
+    staleTime: 10 * 60 * 1000,
+  });
+};

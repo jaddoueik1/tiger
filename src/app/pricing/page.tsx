@@ -3,10 +3,34 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
-import { membershipPlans } from '../../../server/data/memberships';
+import { useMembershipPlans } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
 
 export default function PricingPage() {
+  const { data: plansData, isLoading } = useMembershipPlans();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-16 animate-pulse">
+            <div className="h-16 bg-gray-300 rounded-lg w-80 mx-auto mb-4" />
+            <div className="h-6 bg-gray-300 rounded w-96 mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="card animate-pulse">
+                <div className="h-64 bg-gray-300 rounded mb-4" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const membershipPlans = plansData?.data || [];
+
   return (
     <div className="min-h-screen bg-bg py-20">
       <div className="container mx-auto px-4 lg:px-8">
