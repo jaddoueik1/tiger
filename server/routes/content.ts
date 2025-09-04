@@ -1,30 +1,36 @@
 import express from 'express';
-import { contentBlocks } from '../data/content';
+import { ContentService } from '../services/contentService';
 import { ApiResponse } from '../types';
 
 const router = express.Router();
 
 // GET /api/content/:key
-router.get('/:key', (req, res) => {
+router.get('/:key', async (req, res) => {
   const { key } = req.params;
   const locale = req.query.locale as string || 'en';
   
-  const content = contentBlocks.find(
-    block => block.key === key && block.locale === locale
-  );
+  try {
+    const content = await ContentService.getContentByKey(key, locale);
   
-  if (!content) {
-    return res.status(404).json({
-      error: 'Content Not Found',
-      message: `Content block with key "${key}" and locale "${locale}" not found`,
+    if (!content) {
+      return res.status(404).json({
+        error: 'Content Not Found',
+        message: `Content block with key "${key}" and locale "${locale}" not found`,
+      });
+    }
+  
+    const response: ApiResponse<any> = {
+      data: content,
+    };
+  
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch content'
     });
   }
-  
-  const response: ApiResponse<any> = {
-    data: content.json,
-  };
-  
-  res.json(response);
 });
 
 // GET /api/content/seo/:path

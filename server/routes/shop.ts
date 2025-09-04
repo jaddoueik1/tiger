@@ -1,5 +1,5 @@
 import express from 'express';
-import { categories, products } from '../data/products';
+import { ProductService } from '../services/productService';
 import { ApiResponse } from '../types';
 
 const router = express.Router();
@@ -9,91 +9,86 @@ const carts: { [userId: string]: any } = {};
 const orders: any[] = [];
 
 // GET /api/shop/categories
-router.get('/categories', (req, res) => {
-  const response: ApiResponse<any> = {
-    data: categories,
-  };
-  res.json(response);
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await ProductService.getAllCategories();
+    
+    const response: ApiResponse<any> = {
+      data: categories,
+    };
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch categories'
+    });
+  }
 });
 
 // GET /api/shop/products
-router.get('/products', (req, res) => {
+router.get('/products', async (req, res) => {
   const { query, categoryId, inStock, sort, page = 1, limit = 12 } = req.query;
   
-  let filtered = products.filter(p => p.isActive);
-  
-  if (query) {
-    const searchTerm = (query as string).toLowerCase();
-    filtered = filtered.filter(p => 
-      p.title.toLowerCase().includes(searchTerm) ||
-      p.description.toLowerCase().includes(searchTerm)
-    );
-  }
-  
-  if (categoryId) {
-    filtered = filtered.filter(p => p.categoryId === categoryId);
-  }
-  
-  if (inStock === 'true') {
-    filtered = filtered.filter(p => p.stock > 0);
-  }
-  
-  // Sorting
-  switch (sort) {
-    case 'price_asc':
-      filtered.sort((a, b) => a.price - b.price);
-      break;
-    case 'price_desc':
-      filtered.sort((a, b) => b.price - a.price);
-      break;
-    case 'name_asc':
-      filtered.sort((a, b) => a.title.localeCompare(b.title));
-      break;
-    default:
-      // Default sort by creation (newest first)
-      break;
-  }
-  
-  // Pagination
-  const pageNum = parseInt(page as string);
-  const limitNum = parseInt(limit as string);
-  const startIndex = (pageNum - 1) * limitNum;
-  const endIndex = startIndex + limitNum;
-  const paginatedResults = filtered.slice(startIndex, endIndex);
-  
-  const response: ApiResponse<any> = {
-    data: paginatedResults,
-    meta: {
+  try {
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    
+    const result = await ProductService.getProducts({
+      query: query as string,
+      categoryId: categoryId as string,
+      inStock: inStock === 'true',
+      sort: sort as string,
       page: pageNum,
-      limit: limitNum,
-      total: filtered.length,
-      totalPages: Math.ceil(filtered.length / limitNum),
-    },
-  };
-  
-  res.json(response);
+      limit: limitNum
+    });
+    
+    const response: ApiResponse<any> = {
+      data: result.products,
+      meta: {
+        page: pageNum,
+        limit: limitNum,
+        total: result.total,
+        totalPages: result.totalPages,
+      },
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch products'
+    });
+  }
 });
 
 // GET /api/shop/products/:id
-router.get('/products/:id', (req, res) => {
+router.get('/products/:id', async (req, res) => {
   const { id } = req.params;
   
-  const product = products.find(p => p.id === id && p.isActive);
-  
-  if (!product) {
-    return res.status(404).json({
-      error: 'Product Not Found',
-      message: `Product with id "${id}" not found`,
+  try {
+    const product = await ProductService.getProductById(id);
+    
+    if (!product) {
+      return res.status(404).json({
+        error: 'Product Not Found',
+        message: `Product with id "${id}" not found`,
+      });
+    }
+    
+    const response: ApiResponse<any> = {
+      data: product,
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch product'
     });
   }
-  
-  const category = categories.find(c => c.id === product.categoryId);
-  
-  const response: ApiResponse<any> = {
-    data: { ...product, category },
-  };
-  
-  res.json(response);
 });
 
 // POST /api/shop/cart
@@ -112,7 +107,7 @@ router.post('/cart', (req, res) => {
   let subtotal = 0;
   
   for (const item of items) {
-    const product = products.find(p => p.id === item.productId);
+    const product = await ProductService.getProductById(item.productId);
     if (!product) continue;
     
     const variant = item.variantId ? 

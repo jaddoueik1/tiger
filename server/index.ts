@@ -6,6 +6,7 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import { fileURLToPath } from 'url';
 import YAML from 'yamljs';
+import { connectDatabase } from './config/database';
 import { authRoutes } from './routes/auth';
 import { bookingRoutes } from './routes/bookings';
 import { classRoutes } from './routes/classes';
@@ -22,6 +23,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Connect to database
+connectDatabase();
 
 // Security middleware
 app.use(helmet({
