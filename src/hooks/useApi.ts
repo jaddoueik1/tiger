@@ -71,6 +71,16 @@ export const useCoach = (id: string) => {
     queryKey: ['coach', id],
     queryFn: () => apiClient.getCoach(id),
     staleTime: 10 * 60 * 1000,
+    enabled: !!id,
+  });
+};
+
+export const useCoachAvailability = (id: string, from?: string, to?: string) => {
+  return useQuery({
+    queryKey: ['coach-availability', id, from, to],
+    queryFn: () => apiClient.getCoachAvailability(id, from, to),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!id,
   });
 };
 
