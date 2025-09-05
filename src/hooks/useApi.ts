@@ -23,11 +23,21 @@ export const useClassTemplates = (params?: {
   discipline?: string;
   level?: string;
   coachId?: string;
+  templateId?: string;
 }) => {
   return useQuery({
     queryKey: ['class-templates', params],
     queryFn: () => apiClient.getClassTemplates(params),
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useClassTemplate = (id: string) => {
+  return useQuery({
+    queryKey: ['class-template', id],
+    queryFn: () => apiClient.getClassTemplate(id),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!id,
   });
 };
 
@@ -38,6 +48,7 @@ export const useClassSessions = (params?: {
   level?: string;
   coachId?: string;
   locationId?: string;
+  templateId?: string;
 }) => {
   return useQuery({
     queryKey: ['class-sessions', params],

@@ -78,13 +78,19 @@ class ApiClient {
     discipline?: string;
     level?: string;
     coachId?: string;
+    templateId?: string;
   }) {
     const searchParams = new URLSearchParams();
     if (params?.discipline) searchParams.set('discipline', params.discipline);
     if (params?.level) searchParams.set('level', params.level);
     if (params?.coachId) searchParams.set('coachId', params.coachId);
+    if (params?.templateId) searchParams.set('templateId', params.templateId);
     
     return this.request<any>(`/classes/templates?${searchParams}`);
+  }
+
+  async getClassTemplate(id: string) {
+    return this.request<any>(`/classes/templates/${id}`);
   }
 
   async getClassSessions(params?: {
@@ -94,6 +100,7 @@ class ApiClient {
     level?: string;
     coachId?: string;
     locationId?: string;
+    templateId?: string;
   }) {
     const searchParams = new URLSearchParams();
     if (params?.from) searchParams.set('from', params.from);
@@ -102,6 +109,7 @@ class ApiClient {
     if (params?.level) searchParams.set('level', params.level);
     if (params?.coachId) searchParams.set('coachId', params.coachId);
     if (params?.locationId) searchParams.set('locationId', params.locationId);
+    if (params?.templateId) searchParams.set('templateId', params.templateId);
     
     return this.request<any>(`/classes/sessions?${searchParams}`);
   }
