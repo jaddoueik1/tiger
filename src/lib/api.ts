@@ -218,6 +218,11 @@ class ApiClient {
   async getWhatsAppConfig() {
     return this.request<WhatsAppConfig>('/shop/whatsapp-config');
   }
+
+  // Membership Plans API
+  async getMembershipPlans() {
+    return this.request<any>('/memberships/plans');
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

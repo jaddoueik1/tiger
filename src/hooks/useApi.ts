@@ -87,6 +87,15 @@ export const useProduct = (id: string) => {
   });
 };
 
+// Membership Plans hook
+export const useMembershipPlans = () => {
+  return useQuery({
+    queryKey: ['membership-plans'],
+    queryFn: () => apiClient.getMembershipPlans(),
+    staleTime: 10 * 60 * 1000,
+  });
+};
+
 // Booking mutations
 export const useCreateBooking = () => {
   const queryClient = useQueryClient();
@@ -112,6 +121,7 @@ export const useLogin = () => {
   });
 };
 
+// WhatsApp Order Types and Functions
 type Any = Record<string, any>;
 
 interface Product {
@@ -150,12 +160,6 @@ export type UseWhatsAppOrderOptions = {
   openWindow?: (url: string) => void; // default window.open
 };
 
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url, { cache: 'no-store' });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-
 function onlyDigitsPhone(e164: string) {
   return (e164 || '').replace(/[^\d]/g, '');
 }
@@ -172,11 +176,6 @@ export function buildWhatsAppMessage(
     itemsText: string;
     total: string;
     currency: string;
-  }
-
-  // Membership Plans API
-  async getMembershipPlans() {
-    return this.request<any>('/memberships/plans');
   }
 ) {
   const fallback =
@@ -215,7 +214,7 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
 
   const { data: fetchedConfig, isLoading: isConfigLoading } = useQuery({
     queryKey: ['shop', 'whatsapp-config'],
-    queryFn: () => apiClient.getWhatsAppConfig(),   // <-- use apiClient like other hooks
+    queryFn: () => apiClient.getWhatsAppConfig(),
     staleTime: 10 * 60 * 1000,
     enabled: shouldFetch,
   });
@@ -284,12 +283,3 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
     isConfigLoading,
   };
 }
-
-// Membership Plans hook
-export const useMembershipPlans = () => {
-  return useQuery({
-    queryKey: ['membership-plans'],
-    queryFn: () => apiClient.getMembershipPlans(),
-    staleTime: 10 * 60 * 1000,
-  });
-};
