@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { 
   Clock, 
   Users, 
@@ -291,7 +292,9 @@ export default function ClassDetailPage() {
                   {coach.bio}
                 </p>
                 <Button variant="outline" size="sm" className="w-full">
-                  View Coach Profile
+                  <Link href={`/coaches/${coach.id}`}>
+                    View Coach Profile
+                  </Link>
                 </Button>
               </motion.div>
             )}
