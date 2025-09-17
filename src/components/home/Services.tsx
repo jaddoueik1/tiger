@@ -171,12 +171,6 @@ export default function Services() {
                                                 >
                                                     {ctaLabel}
                                                 </Link>
-                                                <Link
-                                                    href={"/disciplines/" + (svc.id)}
-                                                    className="inline-flex items-center justify-center ml-2 px-4 py-2 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition-opacity"
-                                                >
-                                                    Learn More
-                                                </Link>
                                             </div>
                                         </div>
                                     )}
