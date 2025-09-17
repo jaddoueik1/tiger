@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Filter, Search, Clock, Users, MapPin } from 'lucide-react';
-import { useClassTemplates, useDisciplines, useCoaches } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
+import { useClassTemplates, useCoaches, useDisciplines, useWhatsAppOrder } from '@/hooks/useApi';
+import { motion } from 'framer-motion';
+import { Clock, Search, Users } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ClassesPage() {
   const [filters, setFilters] = useState({
@@ -17,6 +17,18 @@ export default function ClassesPage() {
   const { data: disciplinesData } = useDisciplines();
   const { data: coachesData } = useCoaches();
   const { data: templatesData } = useClassTemplates(filters);
+  const { config, isConfigLoading } = useWhatsAppOrder();
+
+  const sendWhatsAppMessage = (template: any) => {
+    const message = "Hello, I'm interested in the " + template.title + " class. Could you provide more details?";
+    if (!config?.phoneE164) {
+      alert('WhatsApp contact number is not configured.');
+      return;
+    }
+    const url = `https://wa.me/${config?.phoneE164}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
 
   const disciplines = disciplinesData?.data || [];
   const coaches = coachesData?.data || [];
@@ -176,15 +188,9 @@ export default function ClassesPage() {
                     variant="primary"
                     size="sm"
                     className="flex-1"
+                    onClick={() => sendWhatsAppMessage(template)}
                   >
-                    View Schedule
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    Learn More
+                    Inquire
                   </Button>
                 </div>
               </div>

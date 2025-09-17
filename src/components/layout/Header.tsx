@@ -64,7 +64,7 @@ export default function Header() {
                                 )}
                             </button>
 
-                            {isAuthenticated ? (
+                            {/* {isAuthenticated ? (
                                 <div className="flex items-center space-x-4">
                                     <Link href="/account" className="p-2 text-gray-700 hover:text-primary transition-colors">
                                         <User className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function Header() {
                                         {cta.label}
                                     </Link>
                                 </>
-                            )}
+                            )} */}
                         </div>
 
                         {/* Mobile menu button */}
