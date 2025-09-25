@@ -4,21 +4,21 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight, Clock, Users, MapPin } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
-import { useClassSessions } from '@/hooks/useApi';
+import { useClassSessions, useCoaches } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
 
 export default function SchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedCoach, setSelectedCoach] = useState<string>('');
 
   // Get coaches for selection
   const { data: coachesData } = useCoaches();
   const coaches = coachesData?.data || [];
 
-  // Get booked sessions for selected coach
-  const { data: sessionsData, isLoading } = useCoachBookedSessions(selectedCoach);
-
+  // Get class sessions (non-private booked sessions)
+  const { data: sessionsData, isLoading } = useClassSessions({
+    date: selectedDate,
+  });
   const sessions = sessionsData?.data || [];
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
@@ -149,68 +149,45 @@ export default function SchedulePage() {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h4 className="text-xl font-bold text-text group-hover:text-primary transition-colors">
-                        {session.template?.title}
+                        {session.name || 'Group Class'}
                       </h4>
-                      <p className="text-primary font-medium">
-                        {session.discipline?.name}
-                      </p>
+                      <p className="text-primary font-medium">Group Session</p>
                     </div>
-                    <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium">
-                      {session.template?.level?.replace('_', ' ').toUpperCase()}
-                    </span>
+                    {session.repetition && (
+                      <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium capitalize">
+                        {session.repetition}
+                      </span>
+                    )}
                   </div>
 
-                  <p className="text-text-muted mb-6 leading-relaxed">
-                    {session.template?.description}
-                  </p>
+                  {session.templateId && (
+                    <p className="text-text-muted mb-6 leading-relaxed">
+                      Regular group training session
+                    </p>
+                  )}
 
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center space-x-3">
                       <Clock className="w-5 h-5 text-text-muted" />
                       <span className="text-text">
-                        {format(parseISO(session.startAt), 'h:mm a')} - {format(parseISO(session.endAt), 'h:mm a')}
+                        {format(parseISO(session.sessionDate), 'h:mm a')}
                       </span>
                     </div>
                     
                     <div className="flex items-center space-x-3">
                       <Users className="w-5 h-5 text-text-muted" />
                       <span className="text-text">
-                        {session.coach?.name} • {session.bookedCount}/{session.capacity} spots
+                        {session.coach?.name || 'Instructor'}
                       </span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-5 h-5 text-text-muted" />
-                      <span className="text-text">{session.room}</span>
-                    </div>
-                  </div>
-
-                  {/* Capacity Bar */}
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-text-muted">Availability</span>
-                      <span className={`text-sm font-medium ${
-                        session.bookedCount >= session.capacity ? 'text-primary' : 'text-accent'
-                      }`}>
-                        {session.capacity - session.bookedCount} spots left
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all ${
-                          session.bookedCount >= session.capacity ? 'bg-primary' : 'bg-accent'
-                        }`}
-                        style={{ width: `${(session.bookedCount / session.capacity) * 100}%` }}
-                      />
                     </div>
                   </div>
 
                   {/* Action Button */}
                   <Button
-                    variant={session.bookedCount >= session.capacity ? 'secondary' : 'primary'}
+                    variant="primary"
                     className="w-full"
                   >
-                    {session.bookedCount >= session.capacity ? 'Join Waitlist' : 'Book Now'}
+                    Book Now
                   </Button>
                 </motion.div>
               ))}

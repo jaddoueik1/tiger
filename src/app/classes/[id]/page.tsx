@@ -54,9 +54,15 @@ export default function ClassDetailPage() {
   const { data: coachData } = useCoach(coachId || '');
   const coach = coachData?.data;
   
-  // Get coach booked sessions instead of class sessions
-  const { data: sessionsData, isLoading: sessionsLoading } = useCoachBookedSessions(coachId || '');
-  const sessions = sessionsData?.data || [];
+  // Get class sessions for this template
+  const { data: sessionsData, isLoading: sessionsLoading } = useClassSessions();
+  const allSessions = sessionsData?.data || [];
+  
+  // Filter sessions for this specific template and coach
+  const sessions = allSessions.filter((session: any) => 
+    session.templateId === classId || 
+    (session.coach?.id === coachId && !session.isPrivate)
+  );
   
   if (classLoading) {
     return (
