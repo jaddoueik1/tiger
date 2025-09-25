@@ -4,12 +4,15 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight, Clock, Users, MapPin } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
-import { useClassSessions, useCoaches } from '@/hooks/useApi';
+import { useClassSessions, useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
+import ClassBookingModal, { ClassBookingFormData } from '@/components/ClassBookingModal';
 
 export default function SchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
 
   // Get coaches for selection
   const { data: coachesData } = useCoaches();
@@ -21,6 +24,7 @@ export default function SchedulePage() {
   });
   const sessions = sessionsData?.data || [];
 
+  const { config, isConfigLoading } = useWhatsAppOrder();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
 
   const getSessionsForDay = (date: Date) => {
@@ -32,6 +36,43 @@ export default function SchedulePage() {
   const goToPrevWeek = () => setCurrentWeek(addDays(currentWeek, -7));
   const goToNextWeek = () => setCurrentWeek(addDays(currentWeek, 7));
 
+  const handleBookNow = (session: any) => {
+    setSelectedSession(session);
+    setBookingModalOpen(true);
+  };
+
+  const handleBookingSubmit = async (bookingData: ClassBookingFormData) => {
+    if (!config?.phoneE164) {
+      alert('WhatsApp contact number is not configured.');
+      return;
+    }
+
+    const sessionDate = new Date(selectedSession.sessionDate);
+    const message = `Hello! I'd like to book a class.
+
+📋 *Class Details:*
+Class: ${selectedSession.name || 'Group Class'}
+Coach: ${selectedSession.coach.name}
+Date: ${sessionDate.toLocaleDateString()}
+Time: ${sessionDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+
+👤 *Contact Information:*
+Name: ${bookingData.name}
+Email: ${bookingData.email}
+Phone: ${bookingData.phone}
+
+💰 *Payment Method:* Cash (pay at gym)
+
+Please confirm my booking and let me know if you need any additional information.`;
+
+    const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
+    const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    
+    setBookingModalOpen(false);
+    setSelectedSession(null);
+  };
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg py-20">
@@ -186,6 +227,7 @@ export default function SchedulePage() {
                   <Button
                     variant="primary"
                     className="w-full"
+                    onClick={() => handleBookNow(session)}
                   >
                     Book Now
                   </Button>
@@ -202,6 +244,20 @@ export default function SchedulePage() {
           )}
         </motion.div>
       </div>
+      
+      {/* Class Booking Modal */}
+      {selectedSession && (
+        <ClassBookingModal
+          isOpen={bookingModalOpen}
+          onClose={() => {
+            setBookingModalOpen(false);
+            setSelectedSession(null);
+          }}
+          session={selectedSession}
+          onBookingSubmit={handleBookingSubmit}
+          isSubmitting={false}
+        />
+      )}
     </div>
   );
 }
