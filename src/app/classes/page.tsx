@@ -3,8 +3,6 @@
 import Button from '@/components/ui/Button';
 import Head from 'next/head';
 import { useClassTemplates, useCoaches, useDisciplines, useWhatsAppOrder } from '@/hooks/useApi';
-import { usePrivateSessionBooking } from '@/hooks/useApi';
-import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
 import { motion } from 'framer-motion';
 import { Clock, Search, Users } from 'lucide-react';
 import { useState } from 'react';
@@ -13,57 +11,44 @@ export default function ClassesPage() {
   const [filters, setFilters] = useState({
     search: '',
   });
-  const [selectedCoach, setSelectedCoach] = useState<any>(null);
-  const [bookingModalOpen, setBookingModalOpen] = useState(false);
-  const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
   const { data: disciplinesData } = useDisciplines();
   const { data: coachesData } = useCoaches();
   const { data: templatesData } = useClassTemplates();
-  const { bookPrivateSession } = usePrivateSessionBooking();
+  const { config, isConfigLoading } = useWhatsAppOrder();
 
   const sendWhatsAppMessage = (template: any) => {
+    if (!config?.phoneE164) {
+      alert('WhatsApp contact number is not configured.');
+      return;
+    }
+
     // Find the coach for this template
     const templateCoach = coaches.find((coach: any) => 
       template.coachIds?.includes(coach.id)
     );
-    
-    if (templateCoach) {
-      setSelectedCoach(templateCoach);
-      setBookingModalOpen(true);
-    } else {
-      // Fallback to general inquiry
-      const message = "Hello, I'm interested in the " + template.title + " class. Could you provide more details?";
-      // You could implement a general WhatsApp contact here
-      alert('Please contact the gym directly for class inquiries.');
-    }
-  };
 
-  const handleBookingSubmit = async (bookingData: BookingFormData) => {
-    setIsBookingSubmitting(true);
+    const coachName = templateCoach?.name || 'our instructor';
+    const message = `Hello! I'm interested in the "${template.title}" class.
+
+📋 *Class Details:*
+Class: ${template.title}
+Level: ${template.level?.replace('_', ' ').toUpperCase()}
+Duration: ${template.durationMin} minutes
+Instructor: ${coachName}
+${template.price ? `Price: $${template.price} per class` : ''}
+
+Could you please provide more information about:
+- Class schedule and availability
+- What to bring/wear
+- How to book a spot
+
+Thank you!`;
+
+    const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
+    const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
     
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
-      
-      bookPrivateSession({
-        coachName: selectedCoach?.name || 'Coach',
-        name: bookingData.name,
-        email: bookingData.email,
-        phone: bookingData.phone,
-        preferredDate: bookingData.preferredDate,
-        preferredTime: bookingData.preferredTime,
-        notes: bookingData.notes,
-        hourlyRate: selectedCoach?.hourlyRate,
-      });
-      
-      setBookingModalOpen(false);
-      setSelectedCoach(null);
-    } catch (error) {
-      console.error('Booking failed:', error);
-      alert('Booking failed. Please try again.');
-    } finally {
-      setIsBookingSubmitting(false);
-    }
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const disciplines = disciplinesData?.data || [];
@@ -254,25 +239,6 @@ export default function ClassesPage() {
           </div>
         )}
         </div>
-      
-        {/* Private Session Booking Modal */}
-        {selectedCoach && (
-          <PrivateSessionBookingModal
-            isOpen={bookingModalOpen}
-            onClose={() => {
-              setBookingModalOpen(false);
-              setSelectedCoach(null);
-            }}
-            coach={{
-              id: selectedCoach.id,
-              name: selectedCoach.name,
-              photo: selectedCoach.photo,
-              hourlyRate: selectedCoach.hourlyRate,
-            }}
-            onBookingSubmit={handleBookingSubmit}
-            isSubmitting={isBooking}
-          />
-        )}
       </div>
     </>
   );
