@@ -64,6 +64,7 @@ export default function CoachProfilePage() {
 
     const { config, isConfigLoading } = useWhatsAppOrder();
 
+    const { mutate: bookPrivateSession } = usePrivateSessionBooking();
 
     const sendWhatsAppMessage = () => {
         const message = "Hello, I'm interested in training with " + coach?.name + ". Could you provide more details?";
@@ -71,9 +72,9 @@ export default function CoachProfilePage() {
             alert('WhatsApp contact number is not configured.');
             return;
         }
-        const url = `https://wa.me/${config?.phoneE164}?text=${encodeURIComponent(message)}`
+        const url = `https://wa.me/${config?.phoneE164}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank', 'noopener,noreferrer');
-    }
+    };
 
 
     if (coachLoading) {
@@ -89,12 +90,7 @@ export default function CoachProfilePage() {
                             </div>
                             <div className="space-y-4">
                                 <div className="h-48 bg-gray-300 rounded-xl" />
-                          <h4 className="font-semibold text-text">
-                            {session.isPrivate ? 'Private Session' : (session.name || 'Group Class')}
-                          </h4>
-                          <p className="text-sm text-primary">
-                            {session.isPrivate ? 'Private Training' : 'Group Session'}
-                          </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +145,7 @@ export default function CoachProfilePage() {
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
     
     // Filter sessions for upcoming classes (non-private only)
-    const upcomingSessions = bookedSessions
+    const upcomingSessions = bookedSessions.filter((session: any) => !session.isPrivate);
 
     return (
         <div className="min-h-screen bg-bg py-20">
@@ -260,12 +256,8 @@ export default function CoachProfilePage() {
                             {/* Social Links */}
                             {coach.socials && coach.socials.length > 0 && (
                                 <div>
-                                  <h4 className="font-semibold text-text">
-                                    {session.isPrivate ? 'Private Session' : (session.name || 'Group Class')}
-                                  </h4>
-                                  <p className="text-sm text-primary">
-                                    {session.isPrivate ? 'Private Training' : 'Group Session'}
-                                  </p>
+                                    <h3 className="text-lg font-semibold text-text mb-4">Follow {coach.name}</h3>
+                                    <div className="flex space-x-3">
                                         {coach.socials.map((social: any) => {
                                             const IconComponent = socialIcons[social.platform as keyof typeof socialIcons];
                                             if (!IconComponent) return null;
