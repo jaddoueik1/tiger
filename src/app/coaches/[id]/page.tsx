@@ -89,8 +89,12 @@ export default function CoachProfilePage() {
                             </div>
                             <div className="space-y-4">
                                 <div className="h-48 bg-gray-300 rounded-xl" />
-                                <div className="h-32 bg-gray-300 rounded-xl" />
-                            </div>
+                          <h4 className="font-semibold text-text">
+                            {session.isPrivate ? 'Private Session' : (session.name || 'Group Class')}
+                          </h4>
+                          <p className="text-sm text-primary">
+                            {session.isPrivate ? 'Private Training' : 'Group Session'}
+                          </p>
                         </div>
                     </div>
                 </div>
@@ -146,8 +150,6 @@ export default function CoachProfilePage() {
     
     // Filter sessions for upcoming classes (non-private only)
     const upcomingSessions = bookedSessions
-        .filter((session: any) => !session.isPrivate)
-        .slice(0, 5);
 
     return (
         <div className="min-h-screen bg-bg py-20">
@@ -258,8 +260,12 @@ export default function CoachProfilePage() {
                             {/* Social Links */}
                             {coach.socials && coach.socials.length > 0 && (
                                 <div>
-                                    <h3 className="text-lg font-semibold text-text mb-4">Follow {coach.name}</h3>
-                                    <div className="flex space-x-4">
+                                  <h4 className="font-semibold text-text">
+                                    {session.isPrivate ? 'Private Session' : (session.name || 'Group Class')}
+                                  </h4>
+                                  <p className="text-sm text-primary">
+                                    {session.isPrivate ? 'Private Training' : 'Group Session'}
+                                  </p>
                                         {coach.socials.map((social: any) => {
                                             const IconComponent = socialIcons[social.platform as keyof typeof socialIcons];
                                             if (!IconComponent) return null;

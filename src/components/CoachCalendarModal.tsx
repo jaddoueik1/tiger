@@ -123,7 +123,7 @@ export default function CoachCalendarModal({
                         p-2 min-h-[60px] text-left rounded-lg transition-colors relative
                         ${!isCurrentMonth ? 'text-gray-400' : 'text-text'}
                         ${isSelected ? 'bg-primary text-white' : 'hover:bg-gray-100'}
-                        ${daySession.length > 0 ? 'font-medium' : ''}
+                        ${daySessions.length > 0 ? 'font-medium' : ''}
                       `}
                     >
                       <div className="text-sm">{format(day, 'd')}</div>
