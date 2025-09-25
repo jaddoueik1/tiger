@@ -27,6 +27,8 @@ export const useCartStore = create<Cart>()(
       pushToCart: (product, quantity = 1) => {
         const products = get().products;
         const existing = products.find((p) => p.id === product.id);
+        
+        console.log('pushToCart called with:', { product, quantity, existing });
 
         if (existing) {
           // Update quantity if already in cart
@@ -37,12 +39,18 @@ export const useCartStore = create<Cart>()(
                 : p
             ),
           });
+          console.log('Updated existing product quantity');
         } else {
           // Add new product
+          const newProduct = { ...product, quantity };
+          console.log('Adding new product:', newProduct);
           set({
-            products: [...products, { ...product, quantity }],
+            products: [...products, newProduct],
           });
         }
+        
+        // Log final state
+        console.log('Cart state after update:', get().products);
       },
       removeFromCart: (id) => {
         set({

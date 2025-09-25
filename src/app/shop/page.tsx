@@ -49,9 +49,15 @@ export default function ShopPage() {
       id: product.id,
       name: product.title,
       price: product.price,
-      image: product.images?.[0] // Add the first image
+      image: product.images?.[0]
     });
-  }
+  };
+
+  const handleAddToCart = (product: any) => {
+    addProductToCart(product);
+    // Optional: Show a toast notification
+    console.log(`Added ${product.title} to cart`);
+  };
 
   return (
     <div className="min-h-screen bg-bg py-20">
@@ -189,7 +195,7 @@ export default function ShopPage() {
                   variant="primary"
                   className="w-full"
                   disabled={product.stock === 0}
-                  onClick={() => addProductToCart(product)}
+                  onClick={() => handleAddToCart(product)}
                 >
                   <ShoppingCart className="w-4 h-4 mr-2" />
                   Add to Cart
