@@ -25,6 +25,8 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import CoachCalendarModal from '@/components/CoachCalendarModal';
+import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
+import { usePrivateSessionBooking } from '@/hooks/useApi';
 
 const socialIcons = {
     instagram: Instagram,
@@ -47,6 +49,8 @@ export default function CoachProfilePage() {
     const { isAuthenticated } = useAuthStore();
     const [selectedWeek, setSelectedWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
     const [calendarOpen, setCalendarOpen] = useState(false);
+    const [bookingModalOpen, setBookingModalOpen] = useState(false);
+    const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
     const coachId = params.id as string;
 
@@ -109,7 +113,33 @@ export default function CoachProfilePage() {
     }
 
     const handleBookPrivate = () => {
-        sendWhatsAppMessage();
+        setBookingModalOpen(true);
+    };
+
+    const handleBookingSubmit = async (bookingData: BookingFormData) => {
+        setIsBookingSubmitting(true);
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
+            
+            bookPrivateSession({
+                coachName: coach?.name || 'Coach',
+                name: bookingData.name,
+                email: bookingData.email,
+                phone: bookingData.phone,
+                preferredDate: bookingData.preferredDate,
+                preferredTime: bookingData.preferredTime,
+                notes: bookingData.notes,
+                hourlyRate: coach?.hourlyRate,
+            });
+            
+            setBookingModalOpen(false);
+        } catch (error) {
+            console.error('Booking failed:', error);
+            alert('Booking failed. Please try again.');
+        } finally {
+            setIsBookingSubmitting(false);
+        }
     };
 
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
@@ -447,6 +477,22 @@ export default function CoachProfilePage() {
                 coachName={coach?.name || 'Coach'}
                 bookedSessions={bookedSessions}
             />
+            
+            {/* Private Session Booking Modal */}
+            {coach && (
+                <PrivateSessionBookingModal
+                    isOpen={bookingModalOpen}
+                    onClose={() => setBookingModalOpen(false)}
+                    coach={{
+                        id: coach.id,
+                        name: coach.name,
+                        photo: coach.photo,
+                        hourlyRate: coach.hourlyRate,
+                    }}
+                    onBookingSubmit={handleBookingSubmit}
+                    isSubmitting={isBookingSubmitting}
+                />
+            )}
         </div>
     );
 }

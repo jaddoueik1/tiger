@@ -358,6 +358,54 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
   };
 }
 
+// Private Session Booking Hook
+export const usePrivateSessionBooking = () => {
+  const { config, isConfigLoading } = useWhatsAppOrder();
+
+  const bookPrivateSession = (bookingData: {
+    coachName: string;
+    name: string;
+    email: string;
+    phone: string;
+    preferredDate: string;
+    preferredTime: string;
+    notes?: string;
+    hourlyRate?: number;
+  }) => {
+    if (!config?.phoneE164) {
+      throw new Error('WhatsApp contact number is not configured.');
+    }
+
+    const message = `Hello! I'd like to book a private training session.
+
+📋 *Booking Details:*
+Coach: ${bookingData.coachName}
+Date: ${bookingData.preferredDate}
+Time: ${bookingData.preferredTime}
+${bookingData.hourlyRate ? `Rate: $${bookingData.hourlyRate}/hour` : ''}
+
+👤 *Contact Information:*
+Name: ${bookingData.name}
+Email: ${bookingData.email}
+Phone: ${bookingData.phone}
+
+💰 *Payment Method:* Cash (pay at gym)
+
+${bookingData.notes ? `📝 *Additional Notes:*\n${bookingData.notes}\n\n` : ''}Please confirm availability and let me know the next steps.`;
+
+    const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
+    const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  return {
+    bookPrivateSession,
+    isConfigLoading,
+    config,
+  };
+};
+
 // Cart mutations
 export const useCreateCart = () => {
   const queryClient = useQueryClient();

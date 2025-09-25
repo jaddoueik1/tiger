@@ -2,24 +2,51 @@
 
 import Button from '@/components/ui/Button';
 import { useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
+import { usePrivateSessionBooking } from '@/hooks/useApi';
+import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
 import { motion } from 'framer-motion';
 import { Award, Instagram } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function CoachesPage() {
     const { data: coachesData, isLoading } = useCoaches();
-    const { config, isConfigLoading } = useWhatsAppOrder();
+    const { bookPrivateSession } = usePrivateSessionBooking();
+    const [selectedCoach, setSelectedCoach] = useState<any>(null);
+    const [bookingModalOpen, setBookingModalOpen] = useState(false);
+    const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
     const handleBookPrivate = (coach: any) => {
-        // For simplicity, we'll just open WhatsApp with a predefined message
-        const message = "Hello, I'm interested in booking a private training session with " + coach.name + ". Could you provide more details?";
-        if (!config?.phoneE164) {
-            alert('WhatsApp contact number is not configured.');
-            return;
+        setSelectedCoach(coach);
+        setBookingModalOpen(true);
+    };
+
+    const handleBookingSubmit = async (bookingData: BookingFormData) => {
+        setIsBookingSubmitting(true);
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
+            
+            bookPrivateSession({
+                coachName: selectedCoach?.name || 'Coach',
+                name: bookingData.name,
+                email: bookingData.email,
+                phone: bookingData.phone,
+                preferredDate: bookingData.preferredDate,
+                preferredTime: bookingData.preferredTime,
+                notes: bookingData.notes,
+                hourlyRate: selectedCoach?.hourlyRate,
+            });
+            
+            setBookingModalOpen(false);
+            setSelectedCoach(null);
+        } catch (error) {
+            console.error('Booking failed:', error);
+            alert('Booking failed. Please try again.');
+        } finally {
+            setIsBookingSubmitting(false);
         }
-        const url = `https://wa.me/${config?.phoneE164}?text=${encodeURIComponent(message)}`
-        window.open(url, '_blank', 'noopener,noreferrer');
-    }
+    };
 
     if (isLoading) {
         return (
@@ -160,6 +187,25 @@ export default function CoachesPage() {
                     ))}
                 </div>
             </div>
+            
+            {/* Private Session Booking Modal */}
+            {selectedCoach && (
+                <PrivateSessionBookingModal
+                    isOpen={bookingModalOpen}
+                    onClose={() => {
+                        setBookingModalOpen(false);
+                        setSelectedCoach(null);
+                    }}
+                    coach={{
+                        id: selectedCoach.id,
+                        name: selectedCoach.name,
+                        photo: selectedCoach.photo,
+                        hourlyRate: selectedCoach.hourlyRate,
+                    }}
+                    onBookingSubmit={handleBookingSubmit}
+                    isSubmitting={isBookingSubmitting}
+                />
+            )}
         </div>
     );
 }
