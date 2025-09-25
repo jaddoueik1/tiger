@@ -1,7 +1,21 @@
-import { WhatsAppConfig } from '@/hooks/useApi';
-import { ApiError, ApiResponse } from '@/types';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+export interface ApiResponse<T> {
+  data: T;
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+  };
+}
+
+export interface ApiError {
+  error: string;
+  message: string;
+  statusCode?: number;
+  details?: any;
+}
 
 class ApiClient {
   private baseUrl: string;
@@ -60,83 +74,32 @@ class ApiClient {
     return response.json();
   }
 
+  // Health check
+  async getHealth() {
+    return this.request<{ status: string; timestamp: string }>('/health');
+  }
+
   // Content API
   async getContent(key: string, locale = 'en') {
-    return this.request<any>(`/content/${key}?locale=${locale}`);
+    return this.request<any>(`/api/content/${key}?locale=${locale}`);
   }
 
-  async getSeoData(path: string, locale = 'en') {
-    return this.request<any>(`/content/seo/${path}?locale=${locale}`);
+  async updateContent(key: string, json: any, locale = 'en') {
+    return this.request<any>(`/api/content/${key}`, {
+      method: 'PUT',
+      body: JSON.stringify({ json, locale }),
+    });
   }
 
-  // Classes API
-  async getDisciplines() {
-    return this.request<any>('/classes/disciplines');
-  }
-
-  async getClassTemplates(params?: {
-    discipline?: string;
-    level?: string;
-    coachId?: string;
-    templateId?: string;
-  }) {
-    const searchParams = new URLSearchParams();
-    if (params?.discipline) searchParams.set('discipline', params.discipline);
-    if (params?.level) searchParams.set('level', params.level);
-    if (params?.coachId) searchParams.set('coachId', params.coachId);
-    if (params?.templateId) searchParams.set('templateId', params.templateId);
-    
-    return this.request<any>(`/classes/templates?${searchParams}`);
-  }
-
-  async getClassTemplate(id: string) {
-    return this.request<any>(`/classes/templates/${id}`);
-  }
-
-  async getClassSessions(params?: {
-    from?: string;
-    to?: string;
-    discipline?: string;
-    level?: string;
-    coachId?: string;
-    locationId?: string;
-    templateId?: string;
-  }) {
-    const searchParams = new URLSearchParams();
-    if (params?.from) searchParams.set('from', params.from);
-    if (params?.to) searchParams.set('to', params.to);
-    if (params?.discipline) searchParams.set('discipline', params.discipline);
-    if (params?.level) searchParams.set('level', params.level);
-    if (params?.coachId) searchParams.set('coachId', params.coachId);
-    if (params?.locationId) searchParams.set('locationId', params.locationId);
-    if (params?.templateId) searchParams.set('templateId', params.templateId);
-    
-    return this.request<any>(`/classes/sessions?${searchParams}`);
-  }
-
-  // Coaches API
-  async getCoaches(specialty?: string) {
-    const searchParams = new URLSearchParams();
-    if (specialty) searchParams.set('specialty', specialty);
-    
-    return this.request<any>(`/coaches?${searchParams}`);
-  }
-
-  async getCoach(id: string) {
-    return this.request<any>(`/coaches/${id}`);
-  }
-
-  async getCoachAvailability(id: string, from?: string, to?: string) {
-    const searchParams = new URLSearchParams();
-    if (from) searchParams.set('from', from);
-    if (to) searchParams.set('to', to);
-    
-    return this.request<any>(`/coaches/${id}/availability?${searchParams}`);
+  async deleteContent(key: string, locale = 'en') {
+    return this.request<any>(`/api/content/${key}?locale=${locale}`, {
+      method: 'DELETE',
+    });
   }
 
   // Auth API
   async login(email: string, password: string) {
-    return this.request<any>('/auth/login', {
+    return this.request<{ token: string; user: any }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -148,42 +111,140 @@ class ApiClient {
     name: string;
     phone?: string;
   }) {
-    return this.request<any>('/auth/register', {
+    return this.request<{ token: string; user: any }>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
-  // User API
-  async getProfile() {
-    return this.request<any>('/me');
+  // Classes API
+  async getDisciplines() {
+    return this.request<any[]>('/api/classes/disciplines');
   }
 
-  async getUserBookings() {
-    return this.request<any>('/me/bookings');
-  }
-
-  async getUserOrders() {
-    return this.request<any>('/me/orders');
-  }
-
-  // Booking API
-  async createBooking(userId: string, sessionId: string) {
-    return this.request<any>('/bookings', {
+  async createDiscipline(discipline: any) {
+    return this.request<any>('/api/classes/disciplines', {
       method: 'POST',
-      body: JSON.stringify({ userId, sessionId }),
+      body: JSON.stringify(discipline),
     });
   }
 
-  async cancelBooking(bookingId: string) {
-    return this.request<any>(`/bookings/${bookingId}`, {
+  async updateDiscipline(id: string, discipline: any) {
+    return this.request<any>(`/api/classes/disciplines/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(discipline),
+    });
+  }
+
+  async deleteDiscipline(id: string) {
+    return this.request<{ success: boolean }>(`/api/classes/disciplines/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getClassTemplates() {
+    return this.request<any[]>('/api/classes/templates');
+  }
+
+  async getClassTemplate(slug: string) {
+    return this.request<any>(`/api/classes/templates/${slug}`);
+  }
+
+  async createClassTemplate(template: any) {
+    return this.request<any>('/api/classes/templates', {
+      method: 'POST',
+      body: JSON.stringify(template),
+    });
+  }
+
+  async updateClassTemplate(id: string, template: any) {
+    return this.request<any>(`/api/classes/templates/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(template),
+    });
+  }
+
+  async deleteClassTemplate(id: string) {
+    return this.request<{ success: boolean }>(`/api/classes/templates/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Coaches API
+  async getCoaches(specialty?: string) {
+    const searchParams = new URLSearchParams();
+    if (specialty) searchParams.set('specialty', specialty);
+    
+    return this.request<any[]>(`/api/coaches?${searchParams}`);
+  }
+
+  async getCoach(id: string) {
+    return this.request<any>(`/api/coaches/${id}`);
+  }
+
+  async createCoach(coach: any) {
+    return this.request<any>('/api/coaches', {
+      method: 'POST',
+      body: JSON.stringify(coach),
+    });
+  }
+
+  async updateCoach(id: string, coach: any) {
+    return this.request<any>(`/api/coaches/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(coach),
+    });
+  }
+
+  async deleteCoach(id: string) {
+    return this.request<{ success: boolean }>(`/api/coaches/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getCoachBookedSessions(id: string) {
+    return this.request<any[]>(`/api/coaches/${id}/booked-sessions`);
+  }
+
+  async addCoachBookedSession(id: string, session: any) {
+    return this.request<any>(`/api/coaches/${id}/booked-sessions`, {
+      method: 'POST',
+      body: JSON.stringify(session),
+    });
+  }
+
+  // Membership Plans API
+  async getMembershipPlans() {
+    return this.request<any[]>('/api/membership-plans');
+  }
+
+  async getMembershipPlan(id: string) {
+    return this.request<any>(`/api/membership-plans/${id}`);
+  }
+
+  async createMembershipPlan(plan: any) {
+    return this.request<any>('/api/membership-plans', {
+      method: 'POST',
+      body: JSON.stringify(plan),
+    });
+  }
+
+  async updateMembershipPlan(id: string, plan: any) {
+    return this.request<any>(`/api/membership-plans/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(plan),
+    });
+  }
+
+  async deleteMembershipPlan(id: string) {
+    return this.request<any>(`/api/membership-plans/${id}`, {
       method: 'DELETE',
     });
   }
 
   // Shop API
   async getProductCategories() {
-    return this.request<any>('/shop/categories');
+    return this.request<any[]>('/api/shop/categories');
   }
 
   async getProducts(params?: {
@@ -197,39 +258,77 @@ class ApiClient {
     const searchParams = new URLSearchParams();
     if (params?.query) searchParams.set('query', params.query);
     if (params?.categoryId) searchParams.set('categoryId', params.categoryId);
-    if (params?.inStock) searchParams.set('inStock', params.inStock.toString());
+    if (params?.inStock !== undefined) searchParams.set('inStock', params.inStock.toString());
     if (params?.sort) searchParams.set('sort', params.sort);
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     
-    return this.request<any>(`/shop/products?${searchParams}`);
+    return this.request<any[]>(`/api/shop/products?${searchParams}`);
   }
 
   async getProduct(id: string) {
-    return this.request<any>(`/shop/products/${id}`);
+    return this.request<any>(`/api/shop/products/${id}`);
   }
 
-  // Private Sessions API
-  async createPrivateSession(sessionData: {
-    userId: string;
-    coachId: string;
-    startAt: string;
-    endAt: string;
-    notes?: string;
-  }) {
-    return this.request<any>('/private-sessions', {
+  async createProduct(product: any) {
+    return this.request<any>('/api/shop/products', {
       method: 'POST',
-      body: JSON.stringify(sessionData),
+      body: JSON.stringify(product),
+    });
+  }
+
+  async updateProduct(id: string, product: any) {
+    return this.request<any>(`/api/shop/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(product),
+    });
+  }
+
+  async deleteProduct(id: string) {
+    return this.request<{ success: boolean }>(`/api/shop/products/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async createCart(userId: string, items: any[]) {
+    return this.request<any>('/api/shop/cart', {
+      method: 'POST',
+      body: JSON.stringify({ userId, items }),
     });
   }
 
   async getWhatsAppConfig() {
-    return this.request<WhatsAppConfig>('/shop/whatsapp-config');
+    return this.request<{ phoneE164: string; template?: string }>('/api/shop/whatsapp-config');
   }
 
-  // Membership Plans API
-  async getMembershipPlans() {
-    return this.request<any>('/memberships/plans');
+  // User API
+  async getProfile() {
+    return this.request<any>('/api/me');
+  }
+
+  async getUserBookings() {
+    return this.request<any[]>('/api/me/bookings');
+  }
+
+  async getUserOrders() {
+    return this.request<any[]>('/api/me/orders');
+  }
+
+  // Admin API
+  async adminListContent(locale = 'en') {
+    return this.request<any[]>(`/api/admin/content?locale=${locale}`);
+  }
+
+  async adminListDisciplines() {
+    return this.request<any[]>('/api/admin/disciplines');
+  }
+
+  async adminListClassTemplates() {
+    return this.request<any[]>('/api/admin/class-templates');
+  }
+
+  async adminListProductCategories() {
+    return this.request<any[]>('/api/admin/product-categories');
   }
 }
 

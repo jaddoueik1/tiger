@@ -8,15 +8,12 @@ import { useState } from 'react';
 
 export default function ClassesPage() {
   const [filters, setFilters] = useState({
-    discipline: '',
-    level: '',
-    coachId: '',
     search: '',
   });
 
   const { data: disciplinesData } = useDisciplines();
   const { data: coachesData } = useCoaches();
-  const { data: templatesData } = useClassTemplates(filters);
+  const { data: templatesData } = useClassTemplates();
   const { config, isConfigLoading } = useWhatsAppOrder();
 
   const sendWhatsAppMessage = (template: any) => {
@@ -32,7 +29,14 @@ export default function ClassesPage() {
 
   const disciplines = disciplinesData?.data || [];
   const coaches = coachesData?.data || [];
-  const templates = templatesData?.data || [];
+  
+  // Filter templates based on search
+  const allTemplates = templatesData?.data || [];
+  const templates = allTemplates.filter((template: any) => 
+    !filters.search || 
+    template.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+    template.description.toLowerCase().includes(filters.search.toLowerCase())
+  );
 
   const levels = [
     { value: 'beginner', label: 'Beginner' },

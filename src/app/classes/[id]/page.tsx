@@ -50,20 +50,12 @@ export default function ClassDetailPage() {
   const classTemplate = classData?.data;
   
   // Get coach details if available
-  const coachId = classTemplate?.coaches?.[0]?.id;
+  const coachId = classTemplate?.coachIds?.[0];
   const { data: coachData } = useCoach(coachId || '');
   const coach = coachData?.data;
   
-  // Get upcoming sessions for this class
-  const fromDate = format(new Date(), 'yyyy-MM-dd');
-  const toDate = format(addDays(new Date(), 14), 'yyyy-MM-dd');
-  
-  const { data: sessionsData, isLoading: sessionsLoading } = useClassSessions({
-    templateId: classId,
-    from: fromDate,
-    to: toDate,
-  });
-  
+  // Get coach booked sessions instead of class sessions
+  const { data: sessionsData, isLoading: sessionsLoading } = useCoachBookedSessions(coachId || '');
   const sessions = sessionsData?.data || [];
   
   if (classLoading) {

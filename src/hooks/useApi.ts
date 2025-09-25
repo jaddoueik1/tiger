@@ -19,41 +19,20 @@ export const useDisciplines = () => {
   });
 };
 
-export const useClassTemplates = (params?: {
-  discipline?: string;
-  level?: string;
-  coachId?: string;
-  templateId?: string;
-}) => {
+export const useClassTemplates = () => {
   return useQuery({
-    queryKey: ['class-templates', params],
-    queryFn: () => apiClient.getClassTemplates(params),
+    queryKey: ['class-templates'],
+    queryFn: () => apiClient.getClassTemplates(),
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useClassTemplate = (id: string) => {
+export const useClassTemplate = (slug: string) => {
   return useQuery({
-    queryKey: ['class-template', id],
-    queryFn: () => apiClient.getClassTemplate(id),
+    queryKey: ['class-template', slug],
+    queryFn: () => apiClient.getClassTemplate(slug),
     staleTime: 5 * 60 * 1000,
-    enabled: !!id,
-  });
-};
-
-export const useClassSessions = (params?: {
-  from?: string;
-  to?: string;
-  discipline?: string;
-  level?: string;
-  coachId?: string;
-  locationId?: string;
-  templateId?: string;
-}) => {
-  return useQuery({
-    queryKey: ['class-sessions', params],
-    queryFn: () => apiClient.getClassSessions(params),
-    staleTime: 1 * 60 * 1000, // 1 minute for real-time capacity
+    enabled: !!slug,
   });
 };
 
@@ -75,10 +54,10 @@ export const useCoach = (id: string) => {
   });
 };
 
-export const useCoachAvailability = (id: string, from?: string, to?: string) => {
+export const useCoachBookedSessions = (id: string) => {
   return useQuery({
-    queryKey: ['coach-availability', id, from, to],
-    queryFn: () => apiClient.getCoachAvailability(id, from, to),
+    queryKey: ['coach-booked-sessions', id],
+    queryFn: () => apiClient.getCoachBookedSessions(id),
     staleTime: 5 * 60 * 1000,
     enabled: !!id,
   });
@@ -105,6 +84,15 @@ export const useProduct = (id: string) => {
     queryKey: ['product', id],
     queryFn: () => apiClient.getProduct(id),
     staleTime: 5 * 60 * 1000,
+    enabled: !!id,
+  });
+};
+
+export const useProductCategories = () => {
+  return useQuery({
+    queryKey: ['product-categories'],
+    queryFn: () => apiClient.getProductCategories(),
+    staleTime: 10 * 60 * 1000,
   });
 };
 
@@ -114,20 +102,6 @@ export const useMembershipPlans = () => {
     queryKey: ['membership-plans'],
     queryFn: () => apiClient.getMembershipPlans(),
     staleTime: 10 * 60 * 1000,
-  });
-};
-
-// Booking mutations
-export const useCreateBooking = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ({ userId, sessionId }: { userId: string; sessionId: string }) =>
-      apiClient.createBooking(userId, sessionId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['class-sessions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-bookings'] });
-    },
   });
 };
 
@@ -142,16 +116,46 @@ export const useLogin = () => {
   });
 };
 
+export const useRegister = () => {
+  return useMutation({
+    mutationFn: (userData: {
+      email: string;
+      password: string;
+      name: string;
+      phone?: string;
+    }) => apiClient.register(userData),
+    onSuccess: (response) => {
+      apiClient.setToken(response.data.token);
+    },
+  });
+};
+
+// User hooks
+export const useProfile = () => {
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: () => apiClient.getProfile(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useUserBookings = () => {
+  return useQuery({
+    queryKey: ['user-bookings'],
+    queryFn: () => apiClient.getUserBookings(),
+    staleTime: 1 * 60 * 1000, // 1 minute for real-time updates
+  });
+};
+
+export const useUserOrders = () => {
+  return useQuery({
+    queryKey: ['user-orders'],
+    queryFn: () => apiClient.getUserOrders(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 // WhatsApp Order Types and Functions
-type Any = Record<string, any>;
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 export type Customer = {
   name: string;
   email: string;
@@ -161,24 +165,29 @@ export type Customer = {
 };
 
 export type WhatsAppConfig = {
-  phoneE164: string;     // e.g. "+96171234567"
-  template?: string;     // "Order {orderId}\n{name}\n{items}\nTotal: {total} {currency}"
+  phoneE164: string;
+  template?: string;
 };
 
 export type PlaceOrderArgs = {
   customer: Customer;
-  items: Product[];
-  currency?: string;     // default 'USD'
-  orderId?: string;      // optional explicit ID
-  orderIdPrefix?: string;// default 'TEMP-'
-  clearCart?: () => void;// optional side-effect after opening WA
+  items: Array<{
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }>;
+  currency?: string;
+  orderId?: string;
+  orderIdPrefix?: string;
+  clearCart?: () => void;
 };
 
 export type UseWhatsAppOrderOptions = {
-  apiBase?: string;      // default process.env.NEXT_PUBLIC_API_BASE
-  config?: WhatsAppConfig;      // pass to skip fetching from BE
-  fetchConfig?: boolean;        // default true (ignored if config provided)
-  openWindow?: (url: string) => void; // default window.open
+  apiBase?: string;
+  config?: WhatsAppConfig;
+  fetchConfig?: boolean;
+  openWindow?: (url: string) => void;
 };
 
 function onlyDigitsPhone(e164: string) {
@@ -214,7 +223,7 @@ export function buildWhatsAppMessage(
 
   // Simple {placeholder} replacement
   return cfg.template.replace(/\{(\w+)\}/g, (_, k) => {
-    const map: Any = {
+    const map: Record<string, any> = {
       orderId: vars.orderId,
       name: vars.name,
       email: vars.email,
@@ -230,7 +239,6 @@ export function buildWhatsAppMessage(
 }
 
 export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
-  // If a config is passed, we skip fetching (same pattern you use with params-enabled queries)
   const shouldFetch = !opts?.config;
 
   const { data: fetchedConfig, isLoading: isConfigLoading } = useQuery({
@@ -304,3 +312,49 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
     isConfigLoading,
   };
 }
+
+// Cart mutations
+export const useCreateCart = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ userId, items }: { userId: string; items: any[] }) =>
+      apiClient.createCart(userId, items),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
+};
+
+// Admin hooks
+export const useAdminContent = (locale = 'en') => {
+  return useQuery({
+    queryKey: ['admin-content', locale],
+    queryFn: () => apiClient.adminListContent(locale),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useAdminDisciplines = () => {
+  return useQuery({
+    queryKey: ['admin-disciplines'],
+    queryFn: () => apiClient.adminListDisciplines(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useAdminClassTemplates = () => {
+  return useQuery({
+    queryKey: ['admin-class-templates'],
+    queryFn: () => apiClient.adminListClassTemplates(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useAdminProductCategories = () => {
+  return useQuery({
+    queryKey: ['admin-product-categories'],
+    queryFn: () => apiClient.adminListProductCategories(),
+    staleTime: 5 * 60 * 1000,
+  });
+};

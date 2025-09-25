@@ -52,15 +52,8 @@ export default function CoachProfilePage() {
     const { data: coachData, isLoading: coachLoading } = useCoach(coachId);
     const coach = coachData?.data;
 
-    // Get coach availability for the selected week
-    const fromDate = format(selectedWeek, 'yyyy-MM-dd');
-    const toDate = format(addDays(selectedWeek, 6), 'yyyy-MM-dd');
-
-    const { data: availabilityData, isLoading: availabilityLoading } = useCoachAvailability(
-        coachId,
-        fromDate,
-        toDate
-    );
+    // Get coach booked sessions
+    const { data: sessionsData, isLoading: sessionsLoading } = useCoachBookedSessions(coachId);
 
     const { config, isConfigLoading } = useWhatsAppOrder();
 
@@ -75,15 +68,6 @@ export default function CoachProfilePage() {
         window.open(url, '_blank', 'noopener,noreferrer');
     }
 
-    // Get upcoming classes taught by this coach
-    const { data: sessionsData, isLoading: sessionsLoading } = useClassSessions({
-        coachId,
-        from: format(new Date(), 'yyyy-MM-dd'),
-        to: format(addDays(new Date(), 14), 'yyyy-MM-dd'),
-    });
-
-    const availability = availabilityData?.data || [];
-    const upcomingSessions = sessionsData?.data || [];
 
     if (coachLoading) {
         return (

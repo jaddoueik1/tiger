@@ -10,22 +10,22 @@ import Button from '@/components/ui/Button';
 export default function SchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCoach, setSelectedCoach] = useState<string>('');
 
-  const fromDate = format(currentWeek, 'yyyy-MM-dd');
-  const toDate = format(addDays(currentWeek, 6), 'yyyy-MM-dd');
+  // Get coaches for selection
+  const { data: coachesData } = useCoaches();
+  const coaches = coachesData?.data || [];
 
-  const { data: sessionsData, isLoading } = useClassSessions({
-    from: fromDate,
-    to: toDate,
-  });
+  // Get booked sessions for selected coach
+  const { data: sessionsData, isLoading } = useCoachBookedSessions(selectedCoach);
 
   const sessions = sessionsData?.data || [];
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
 
   const getSessionsForDay = (date: Date) => {
-    return sessions.filter((session: any) => 
-      isSameDay(parseISO(session.startAt), date)
+    return sessions.filter((session: any) =>
+      isSameDay(parseISO(session.sessionDate), date)
     );
   };
 
