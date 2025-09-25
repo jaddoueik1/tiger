@@ -46,11 +46,11 @@ export default function ShopPage() {
   const addProductToCart = (product: any) => {
     console.log('Adding product to cart:', product);
     pushToCart({
-      id: product.id,
+      id: product.id || product._id || product.sku || `product-${Date.now()}`,
       name: product.title,
       price: product.price,
       image: product.images?.[0]
-    });
+    }, 1);
   };
 
   const handleAddToCart = (product: any) => {
