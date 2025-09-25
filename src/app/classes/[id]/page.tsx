@@ -22,13 +22,6 @@ import { useAuthStore } from '@/store/authStore';
 import Button from '@/components/ui/Button';
 import { format, parseISO, isSameDay, addDays } from 'date-fns';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  return {
-    title: 'Tiger Muay Thai - Class Details',
-    description: 'View class details and book your training session.',
-  };
-}
-
 const difficultyColors = {
   beginner: 'bg-green-100 text-green-800',
   intermediate: 'bg-yellow-100 text-yellow-800', 

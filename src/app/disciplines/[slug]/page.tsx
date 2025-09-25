@@ -18,13 +18,6 @@ import {
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  return {
-    title: `Tiger Muay Thai - ${params.slug.charAt(0).toUpperCase() + params.slug.slice(1).replace('-', ' ')}`,
-    description: `Learn about ${params.slug.replace('-', ' ')} training at Tiger Muay Thai.`,
-  };
-}
-
 const benefitIcons = {
   'cardiovascular fitness': Heart,
   'strength building': Target,

@@ -6,11 +6,6 @@ import { motion } from 'framer-motion';
 import { Clock, Target, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Tiger Muay Thai - Martial Arts Disciplines',
-  description: 'Discover our diverse range of martial arts disciplines and training programs.',
-};
-
 export default function DisciplinesPage() {
   const { data: disciplinesData, isLoading } = useDisciplines();
 

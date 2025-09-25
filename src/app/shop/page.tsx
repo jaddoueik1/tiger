@@ -7,11 +7,6 @@ import { motion } from 'framer-motion';
 import { Search, ShoppingCart, Star } from 'lucide-react';
 import { useState } from 'react';
 
-export const metadata = {
-  title: 'Tiger Muay Thai - Shop',
-  description: 'Premium martial arts gear and equipment for your training needs.',
-};
-
 export default function ShopPage() {
   const [filters, setFilters] = useState({
     search: '',
