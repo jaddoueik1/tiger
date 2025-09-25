@@ -1,14 +1,61 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
-import { useMembershipPlans } from '@/hooks/useApi';
+import { useMembershipPlans, useWhatsAppOrder } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
+import MembershipModal, { MembershipFormData } from '@/components/MembershipModal';
 
 export default function PricingPage() {
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  
   const { data: plansData, isLoading } = useMembershipPlans();
+  const { placeOrder, isPlacing, config, isConfigLoading } = useWhatsAppOrder();
+
+  const handleStartMembership = (plan: any) => {
+    setSelectedPlan(plan);
+    setModalOpen(true);
+  };
+
+  const handleMembershipSubmit = async (formData: MembershipFormData) => {
+    if (!config?.phoneE164) {
+      alert('WhatsApp contact number is not configured.');
+      return;
+    }
+
+    if (formData.paymentMethod === 'cash') {
+      const message = `Hello! I'd like to start a membership.
+
+💪 *Membership Details:*
+Plan: ${selectedPlan.name}
+Price: $${selectedPlan.price}/${selectedPlan.period}
+
+👤 *Contact Information:*
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+
+💰 *Payment Method:* Cash (pay at gym)
+
+📋 *Plan Benefits:*
+${selectedPlan.benefits.map((benefit: string) => `• ${benefit}`).join('\n')}
+
+Please let me know the next steps to get started with my membership!`;
+
+      const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
+      const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      
+      setModalOpen(false);
+      setSelectedPlan(null);
+    } else {
+      alert('Card payment coming soon!');
+    }
+  };
   
   if (isLoading) {
     return (
@@ -105,8 +152,9 @@ export default function PricingPage() {
                 variant={plan.isPopular ? 'primary' : 'outline'}
                 className="w-full"
                 size="lg"
+                onClick={() => handleStartMembership(plan)}
               >
-                {plan.name === 'Drop-In' ? 'Buy Single Class' : 'Start Membership'}
+                {plan.name === 'Drop-In' ? 'Inquire About Drop-In' : 'Start Membership'}
               </Button>
 
               {/* Terms */}
@@ -151,6 +199,20 @@ export default function PricingPage() {
           </div>
         </motion.div>
         </div>
+        
+        {/* Membership Modal */}
+        {selectedPlan && (
+          <MembershipModal
+            isOpen={modalOpen}
+            onClose={() => {
+              setModalOpen(false);
+              setSelectedPlan(null);
+            }}
+            plan={selectedPlan}
+            onSubmit={handleMembershipSubmit}
+            isSubmitting={isPlacing}
+          />
+        )}
       </div>
     </>
   );
