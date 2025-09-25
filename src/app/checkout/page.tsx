@@ -14,6 +14,7 @@ type FormState = {
   phone: string;
   address: string;
   note: string;
+  paymentMethod: 'cash' | 'card';
 };
 type FormErrors = Partial<Record<keyof FormState, string>>;
 
@@ -61,6 +62,7 @@ export default function CheckoutPage() {
     phone: '',
     address: '',
     note: '',
+    paymentMethod: 'cash',
   });
   const [touched, setTouched] = React.useState<Partial<Record<keyof FormState, boolean>>>({});
   const errors = validate(form);
@@ -81,6 +83,7 @@ export default function CheckoutPage() {
       phone: true,
       address: true,
       note: touched.note ?? false,
+      paymentMethod: touched.paymentMethod ?? false,
     });
     if (!isFormValid) return;
 
@@ -91,9 +94,15 @@ export default function CheckoutPage() {
       phone: form.phone.trim(),
       address: form.address.trim(),
       note: form.note.trim(),
+      paymentMethod: form.paymentMethod,
     };
 
-    placeOrder({ customer: clean, items, currency /*, clearCart */ });
+    if (clean.paymentMethod === 'cash') {
+      placeOrder({ customer: clean, items, currency });
+    } else {
+      // Card payment would go here when implemented
+      alert('Card payment coming soon!');
+    }
   };
 
   return (
@@ -150,6 +159,53 @@ export default function CheckoutPage() {
                 onBlur={() => handleBlur('note')}
                 textarea
               />
+
+              {/* Payment Method */}
+              <div>
+                <label className="block mb-2 text-sm text-text-muted">
+                  Payment Method *
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={form.paymentMethod === 'cash'}
+                      onChange={(e) => setForm((s) => ({ ...s, paymentMethod: e.target.value as 'cash' | 'card' }))}
+                      className="mr-3"
+                    />
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 mr-3 rounded-full bg-green-100 flex items-center justify-center">
+                        <span className="text-green-600 text-xs">$</span>
+                      </div>
+                      <div>
+                        <div className="font-medium text-text">Pay with Cash</div>
+                        <div className="text-sm text-text-muted">Pay on delivery</div>
+                      </div>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-not-allowed opacity-50">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      disabled
+                      className="mr-3"
+                    />
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 mr-3 rounded-full bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-400 text-xs">💳</span>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-400">Pay with Card</div>
+                        <div className="text-sm text-gray-400">Coming soon</div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -204,7 +260,10 @@ export default function CheckoutPage() {
                 className="mt-6 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {isPlacing && <Loader2 className="w-4 h-4 animate-spin" />}
-                {L.actions?.placeOrder ?? 'Place order via WhatsApp'}
+                {form.paymentMethod === 'cash' 
+                  ? (L.actions?.placeOrder ?? 'Place order via WhatsApp')
+                  : 'Place order'
+                }
               </button>
 
               {!isConfigLoading && !config?.phoneE164 && (
