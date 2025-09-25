@@ -142,8 +142,8 @@ export default function CoachProfilePage() {
 
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
     
-    // Filter sessions for upcoming classes (non-private only)
-    const upcomingSessions = bookedSessions.filter((session: any) => !session.isPrivate);
+    // Get all upcoming sessions (both private and public)
+    const upcomingSessions = bookedSessions;
 
     return (
         <div className="min-h-screen bg-bg py-20">
@@ -297,14 +297,14 @@ export default function CoachProfilePage() {
                             </motion.div>
                         )}
 
-                        {/* Upcoming Classes */}
+                        {/* Upcoming Sessions */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
                             className="card"
                         >
-                            <h2 className="text-2xl font-bold text-text mb-6">Upcoming Classes</h2>
+                            <h2 className="text-2xl font-bold text-text mb-6">Upcoming Sessions</h2>
 
                             {sessionsLoading ? (
                                 <div className="space-y-4">
@@ -323,8 +323,12 @@ export default function CoachProfilePage() {
                                         >
                                             <div className="flex justify-between items-start mb-3">
                                                 <div>
-                                                    <h4 className="font-semibold text-text">{session.name || 'Group Class'}</h4>
-                                                    <p className="text-sm text-primary">Group Session</p>
+                                                    <h4 className="font-semibold text-text">
+                                                        {session.isPrivate ? 'Private Session' : (session.name || 'Group Class')}
+                                                    </h4>
+                                                    <p className="text-sm text-primary">
+                                                        {session.isPrivate ? 'Private Training' : 'Group Session'}
+                                                    </p>
                                                 </div>
                                                 {session.repetition && (
                                                     <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium capitalize">
@@ -349,7 +353,7 @@ export default function CoachProfilePage() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-text-muted">No upcoming classes scheduled.</p>
+                                <p className="text-text-muted">No upcoming sessions scheduled.</p>
                             )}
                         </motion.div>
                     </div>
