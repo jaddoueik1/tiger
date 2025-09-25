@@ -114,7 +114,7 @@ export default function PrivateSessionBookingModal({
           className="relative bg-surface rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-surface">
             <div className="flex items-center space-x-4">
               <img
                 src={coach.photo}
@@ -136,7 +136,7 @@ export default function PrivateSessionBookingModal({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(90vh-140px)] overflow-y-auto">
+          <form id="booking-form" onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto">
             {/* Personal Information */}
             <div>
               <h3 className="text-lg font-semibold text-text mb-4 flex items-center">
@@ -318,7 +318,7 @@ export default function PrivateSessionBookingModal({
           </form>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-4 p-6 border-t border-gray-200">
+          <div className="flex justify-end space-x-4 p-6 border-t border-gray-200 bg-surface">
             <Button
               variant="secondary"
               onClick={onClose}
@@ -328,7 +328,8 @@ export default function PrivateSessionBookingModal({
             </Button>
             <Button
               variant="primary"
-              onClick={handleSubmit}
+              type="submit"
+              form="booking-form"
               disabled={isSubmitting}
               className="min-w-[120px]"
             >
