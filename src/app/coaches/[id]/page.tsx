@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button';
 import { useCoach, useCoachBookedSessions, useWhatsAppOrder } from '@/hooks/useApi';
 import { useAuthStore } from '@/store/authStore';
 import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
     Award,
@@ -142,8 +143,11 @@ export default function CoachProfilePage() {
 
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
     
-    // Get all upcoming sessions (both private and public)
-    const upcomingSessions = bookedSessions;
+    // Get only future sessions (both private and public)
+    const now = new Date();
+    const upcomingSessions = bookedSessions.filter((session: any) => 
+        isAfter(parseISO(session.sessionDate), now)
+    );
 
     return (
         <div className="min-h-screen bg-bg py-20">
