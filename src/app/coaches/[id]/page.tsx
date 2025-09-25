@@ -157,10 +157,12 @@ export default function CoachProfilePage() {
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
     
     // Get only future sessions (both private and public)
-    const now = new Date();
+    const now = new Date().setDate(new Date().getDate() - 1);
     const upcomingSessions = bookedSessions.filter((session: any) => 
         isAfter(parseISO(session.sessionDate), now)
-    );
+    ).sort((a: any, b: any) =>
+        new Date(a.sessionDate).getTime() - new Date(b.sessionDate).getTime()
+        );
 
     const coachName = coach?.name || 'Coach';
 

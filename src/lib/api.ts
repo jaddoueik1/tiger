@@ -147,7 +147,7 @@ class ApiClient {
   }
 
   async getClassTemplate(slug: string) {
-    return this.request<any>(`/api/classes/templates/${slug}`);
+    return this.request<any>(`/api/classes/templates/discipline/${slug}`);
   }
 
   async createClassTemplate(template: any) {

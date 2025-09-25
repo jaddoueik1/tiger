@@ -1,8 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Head from 'next/head';
-import { useClassTemplates, useDisciplines } from '@/hooks/useApi';
+import { useClassTemplate, useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import {
     Award,
@@ -46,20 +45,13 @@ export default function DisciplineDetailPage() {
   const disciplines = disciplinesData?.data || [];
   const discipline = disciplines.find((d: any) => d.slug === slug);
 
-  const { data: classesData, isLoading: classesLoading } = useClassTemplates({
-    discipline: slug,
-  });
+  const { data: classesData, isLoading: classesLoading } = useClassTemplate(discipline?._id);
   const classes = classesData?.data || [];
 
   if (disciplinesLoading) {
     return (
-      <>
-        <Head>
-          <title>Tiger Muay Thai - Discipline Details</title>
-          <meta name="description" content="Learn about our martial arts disciplines and training programs." />
-        </Head>
-        <div className="min-h-screen bg-bg py-20">
-          <div className="container mx-auto px-4 lg:px-8">
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-300 rounded w-32" />
             <div className="h-16 bg-gray-300 rounded" />
@@ -74,42 +66,28 @@ export default function DisciplineDetailPage() {
               </div>
             </div>
           </div>
-          </div>
         </div>
-      </>
+      </div>
     );
   }
 
   if (!discipline) {
     return (
-      <>
-        <Head>
-          <title>Tiger Muay Thai - Discipline Not Found</title>
-          <meta name="description" content="The discipline you're looking for doesn't exist." />
-        </Head>
-        <div className="min-h-screen bg-bg py-20">
-          <div className="container mx-auto px-4 lg:px-8 text-center">
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Discipline Not Found</h1>
           <p className="text-text-muted mb-8">The discipline you're looking for doesn't exist.</p>
           <Button onClick={() => router.push('/disciplines')}>
             Back to Disciplines
           </Button>
-          </div>
         </div>
-      </>
+      </div>
     );
   }
 
-  const disciplineName = discipline.name || 'Discipline';
-
   return (
-    <>
-      <Head>
-        <title>Tiger Muay Thai - {disciplineName}</title>
-        <meta name="description" content={`Learn about ${disciplineName} training at Tiger Muay Thai. ${discipline.description || ''}`} />
-      </Head>
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+    <div className="min-h-screen bg-bg py-20">
+      <div className="container mx-auto px-4 lg:px-8">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -272,7 +250,7 @@ export default function DisciplineDetailPage() {
                           </div>
                         </div>
                         
-                        <Link href={`/classes/${classTemplate.id}`}>
+                        <Link href={`/classes/${classTemplate._id}`}>
                           <Button variant="outline" size="sm">
                             View Details
                           </Button>
@@ -362,14 +340,13 @@ export default function DisciplineDetailPage() {
                   <Link href="/pricing">View Membership Plans</Link>
                 </Button>
                 <Button variant="outline" className="w-full">
-                  <Link href={`/classes?discipline=${discipline.slug}`}>Browse Classes</Link>
+                  <Link href={`/classes`}>Browse Classes</Link>
                 </Button>
               </div>
             </motion.div>
           </div>
         </div>
-        </div>
       </div>
-    </>
+    </div>
   );
 }

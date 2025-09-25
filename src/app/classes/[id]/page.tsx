@@ -1,27 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  Clock, 
-  Users, 
-  MapPin, 
-  Star, 
-  Calendar,
-  ChevronLeft,
-  Award,
-  Target,
-  Heart,
-  Zap,
-  Shield
-} from 'lucide-react';
-import { useClassTemplate, useClassSessions, useCoach } from '@/hooks/useApi';
-import { useAuthStore } from '@/store/authStore';
 import Button from '@/components/ui/Button';
-import { format, parseISO, isSameDay, addDays } from 'date-fns';
+import { useClassSessions, useClassTemplate, useCoach } from '@/hooks/useApi';
+import { useAuthStore } from '@/store/authStore';
+import { motion } from 'framer-motion';
+import {
+    Award,
+    Calendar,
+    ChevronLeft,
+    Clock,
+    Heart,
+    Shield,
+    Star,
+    Target,
+    Users,
+    Zap
+} from 'lucide-react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const difficultyColors = {
   beginner: 'bg-green-100 text-green-800',
@@ -340,71 +338,7 @@ export default function ClassDetailPage() {
                 </div>
               </div>
             </motion.div>
-
-            {/* Upcoming Sessions */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="card"
-            >
-              <h3 className="text-lg font-semibold text-text mb-4">Upcoming Sessions</h3>
               
-              {sessionsLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-16 bg-gray-300 rounded-lg" />
-                    </div>
-                  ))}
-                </div>
-              ) : sessions.length > 0 ? (
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {sessions.slice(0, 5).map((session: any) => (
-                    <div
-                      key={session.id}
-                      className="border border-gray-200 rounded-lg p-3 hover:border-primary/30 transition-colors"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <div className="font-medium text-sm">
-                            {format(parseISO(session.startAt), 'EEE, MMM d')}
-                          </div>
-                          <div className="text-xs text-text-muted">
-                            {format(parseISO(session.startAt), 'h:mm a')} - {format(parseISO(session.endAt), 'h:mm a')}
-                          </div>
-                        </div>
-                        <div className="text-xs text-text-muted">
-                          {session.bookedCount}/{session.capacity} spots
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-xs text-text-muted">
-                          <MapPin className="w-3 h-3" />
-                          <span>{session.room}</span>
-                        </div>
-                        
-                        <Button
-                          size="sm"
-                          variant={session.bookedCount >= session.capacity ? 'secondary' : 'primary'}
-                          onClick={() => handleBookClass(session.id)}
-                          className="text-xs px-3 py-1"
-                        >
-                          {session.bookedCount >= session.capacity ? 'Waitlist' : 'Book'}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-text-muted text-sm">No upcoming sessions scheduled.</p>
-              )}
-              
-              <Button variant="outline" className="w-full mt-4">
-                View Full Schedule
-              </Button>
-            </motion.div>
           </div>
         </div>
         </div>
