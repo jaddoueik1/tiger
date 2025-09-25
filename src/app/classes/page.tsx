@@ -264,7 +264,7 @@ export default function ClassesPage() {
             hourlyRate: selectedCoach.hourlyRate,
           }}
           onBookingSubmit={handleBookingSubmit}
-          isSubmitting={isBookingSubmitting}
+          isSubmitting={isBooking}
         />
       )}
     </div>
