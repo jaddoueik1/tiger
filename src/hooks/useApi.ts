@@ -39,28 +39,30 @@ export const useClassTemplate = (slug: string) => {
 
 // Class Sessions - using booked sessions filtered for non-private
 export const useClassSessions = (filters?: { date?: Date; disciplineId?: string }) => {
-  const { data: coachesData } = useCoaches();
-  const coaches = coachesData?.data || [];
-  
-  // Get all coach booked sessions
-  const sessionQueries = useQueries({
-    queries: coaches.map((coach: any) => ({
-      queryKey: ['coach-booked-sessions', coach.id],
-      queryFn: () => apiClient.getCoachBookedSessions(coach.id),
-      staleTime: 5 * 60 * 1000,
-    })),
+  // Get all coaches' booked sessions in one call
+  const { data: allSessionsData, isLoading } = useQuery({
+    queryKey: ['all-coaches-booked-sessions'],
+    queryFn: () => apiClient.getAllCoachBookedSessions(),
+    staleTime: 5 * 60 * 1000,
   });
 
-  const isLoading = sessionQueries.some(query => query.isLoading);
-  const allSessions = sessionQueries
-    .flatMap(query => query.data?.data || [])
+  const allCoachSessions = allSessionsData?.data || [];
+  
+  // Flatten all sessions from all coaches and filter for non-private
+  const allSessions = allCoachSessions
+    .flatMap((coachData: any) => 
+      coachData.bookedSessions.map((session: any) => ({
+        ...session,
+        coach: {
+          id: coachData.coachId,
+          name: coachData.coachName,
+        },
+      }))
+    )
     .filter((session: any) => !session.isPrivate) // Only show non-private sessions
     .map((session: any, index: number) => ({
       ...session,
       id: session.id || `session-${index}`,
-      coach: coaches.find((coach: any) => 
-        coach.bookedSessions?.some((bs: any) => bs.sessionDate === session.sessionDate)
-      ),
     }));
 
   // Apply filters

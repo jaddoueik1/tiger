@@ -213,6 +213,10 @@ class ApiClient {
     });
   }
 
+  async getAllCoachBookedSessions() {
+    return this.request<any[]>('/api/coaches/booked-sessions');
+  }
+
   // Membership Plans API
   async getMembershipPlans() {
     return this.request<any[]>('/api/membership-plans');
