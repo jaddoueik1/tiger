@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -66,8 +67,13 @@ export default function ClassDetailPage() {
   
   if (classLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Class Details</title>
+          <meta name="description" content="View class details, schedule, and book your spot." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-300 rounded w-32" />
             <div className="h-16 bg-gray-300 rounded" />
@@ -82,22 +88,29 @@ export default function ClassDetailPage() {
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!classTemplate) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Class Not Found</title>
+          <meta name="description" content="The class you're looking for doesn't exist." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Class Not Found</h1>
           <p className="text-text-muted mb-8">The class you're looking for doesn't exist.</p>
           <Button onClick={() => router.push('/classes')}>
             Back to Classes
           </Button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -110,9 +123,16 @@ export default function ClassDetailPage() {
     console.log('Booking session:', sessionId);
   };
 
+  const className = classTemplate.title || 'Class';
+
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - {className}</title>
+        <meta name="description" content={`${className} details, schedule, and booking information at Tiger Muay Thai.`} />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -387,7 +407,8 @@ export default function ClassDetailPage() {
             </motion.div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

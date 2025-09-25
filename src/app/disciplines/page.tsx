@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import { Clock, Target, TrendingUp, Users } from 'lucide-react';
@@ -11,8 +12,13 @@ export default function DisciplinesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Martial Arts Disciplines</title>
+          <meta name="description" content="Discover the art of combat through our diverse range of martial arts disciplines including Muay Thai, BJJ, Boxing, and MMA." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16 animate-pulse">
             <div className="h-16 bg-gray-300 rounded-lg w-80 mx-auto mb-4" />
             <div className="h-6 bg-gray-300 rounded w-96 mx-auto" />
@@ -34,8 +40,9 @@ export default function DisciplinesPage() {
               </div>
             ))}
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -56,8 +63,13 @@ export default function DisciplinesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Martial Arts Disciplines</title>
+        <meta name="description" content="Discover the art of combat through our diverse range of martial arts disciplines including Muay Thai, BJJ, Boxing, and MMA." />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -194,7 +206,8 @@ export default function DisciplinesPage() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

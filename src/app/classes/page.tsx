@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useClassTemplates, useCoaches, useDisciplines, useWhatsAppOrder } from '@/hooks/useApi';
 import { usePrivateSessionBooking } from '@/hooks/useApi';
 import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
@@ -84,8 +85,13 @@ export default function ClassesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Classes</title>
+        <meta name="description" content="Choose from our diverse range of martial arts and fitness classes, designed for all skill levels." />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -247,26 +253,27 @@ export default function ClassesPage() {
             </p>
           </div>
         )}
-      </div>
+        </div>
       
-      {/* Private Session Booking Modal */}
-      {selectedCoach && (
-        <PrivateSessionBookingModal
-          isOpen={bookingModalOpen}
-          onClose={() => {
-            setBookingModalOpen(false);
-            setSelectedCoach(null);
-          }}
-          coach={{
-            id: selectedCoach.id,
-            name: selectedCoach.name,
-            photo: selectedCoach.photo,
-            hourlyRate: selectedCoach.hourlyRate,
-          }}
-          onBookingSubmit={handleBookingSubmit}
-          isSubmitting={isBooking}
-        />
-      )}
-    </div>
+        {/* Private Session Booking Modal */}
+        {selectedCoach && (
+          <PrivateSessionBookingModal
+            isOpen={bookingModalOpen}
+            onClose={() => {
+              setBookingModalOpen(false);
+              setSelectedCoach(null);
+            }}
+            coach={{
+              id: selectedCoach.id,
+              name: selectedCoach.name,
+              photo: selectedCoach.photo,
+              hourlyRate: selectedCoach.hourlyRate,
+            }}
+            onBookingSubmit={handleBookingSubmit}
+            isSubmitting={isBooking}
+          />
+        )}
+      </div>
+    </>
   );
 }

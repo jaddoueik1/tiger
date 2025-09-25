@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useAuthStore } from '@/store/authStore';
 import { motion } from 'framer-motion';
 import { LogOut, Mail, Shield, User as UserIcon } from 'lucide-react';
@@ -44,8 +45,13 @@ export default function AccountPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-bg py-24">
-        <div className="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - My Account</title>
+          <meta name="description" content="Manage your Tiger Muay Thai account, view bookings, and update your profile." />
+        </Head>
+        <div className="min-h-screen bg-bg py-24">
+          <div className="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -64,14 +70,20 @@ export default function AccountPage() {
           <Button asChild variant="primary">
             <Link href="/auth/login">Sign In</Link>
           </Button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-bg py-24">
-      <div className="container mx-auto px-4 lg:px-8 max-w-4xl space-y-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - My Account</title>
+        <meta name="description" content="Manage your Tiger Muay Thai account, view bookings, and update your profile." />
+      </Head>
+      <div className="min-h-screen bg-bg py-24">
+        <div className="container mx-auto px-4 lg:px-8 max-w-4xl space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -166,7 +178,8 @@ export default function AccountPage() {
             <div className="text-lg font-semibold">Update password & sessions</div>
           </Link>
         </motion.section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

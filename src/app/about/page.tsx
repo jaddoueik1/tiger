@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -9,10 +10,6 @@ import {
 } from 'lucide-react';
 import { useContent } from '@/hooks/useApi';
 
-export const metadata = {
-  title: 'Tiger Muay Thai - About Us',
-  description: 'Learn about our world-class martial arts instructors and training philosophy.',
-};
 
 type AnyRec = Record<string, any>;
 
@@ -61,9 +58,14 @@ export default function AboutPage() {
   const ctaJson: AnyRec = cta?.data ?? {};
 
   return (
-    <main className="bg-bg text-text">
-      {/* HERO */}
-      <section className="relative py-24 md:py-32">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - About Us</title>
+        <meta name="description" content="Learn about our world-class martial arts instructors and training philosophy." />
+      </Head>
+      <main className="bg-bg text-text">
+        {/* HERO */}
+        <section className="relative py-24 md:py-32">
         <div className="container mx-auto px-4 lg:px-8">
           {lHero ? (
             <SectionSkeleton rows={2} />
@@ -304,6 +306,7 @@ export default function AboutPage() {
           </section>
         ))
       }
-    </main>
+      </main>
+    </>
   );
 }

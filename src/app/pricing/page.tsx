@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 import { useMembershipPlans } from '@/hooks/useApi';
@@ -11,8 +12,13 @@ export default function PricingPage() {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Membership Plans</title>
+          <meta name="description" content="Choose the perfect membership plan for your training goals. All plans include access to our world-class facilities." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16 animate-pulse">
             <div className="h-16 bg-gray-300 rounded-lg w-80 mx-auto mb-4" />
             <div className="h-6 bg-gray-300 rounded w-96 mx-auto" />
@@ -24,16 +30,22 @@ export default function PricingPage() {
               </div>
             ))}
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   const membershipPlans = plansData?.data || [];
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Membership Plans</title>
+        <meta name="description" content="Choose the perfect membership plan for your training goals. All plans include access to our world-class facilities." />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -138,7 +150,8 @@ export default function PricingPage() {
             ))}
           </div>
         </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

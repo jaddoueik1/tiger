@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useCoach, useCoachBookedSessions, useWhatsAppOrder } from '@/hooks/useApi';
 import { useAuthStore } from '@/store/authStore';
 import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
@@ -80,8 +81,13 @@ export default function CoachProfilePage() {
 
     if (coachLoading) {
         return (
-            <div className="min-h-screen bg-bg py-20">
-                <div className="container mx-auto px-4 lg:px-8">
+            <>
+                <Head>
+                    <title>Tiger Muay Thai - Coach Profile</title>
+                    <meta name="description" content="View coach profile, schedule, and book private training sessions." />
+                </Head>
+                <div className="min-h-screen bg-bg py-20">
+                    <div className="container mx-auto px-4 lg:px-8">
                     <div className="animate-pulse space-y-8">
                         <div className="h-8 bg-gray-300 rounded w-32" />
                         <div className="grid md:grid-cols-3 gap-8">
@@ -94,22 +100,29 @@ export default function CoachProfilePage() {
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (!coach) {
         return (
-            <div className="min-h-screen bg-bg py-20">
-                <div className="container mx-auto px-4 lg:px-8 text-center">
+            <>
+                <Head>
+                    <title>Tiger Muay Thai - Coach Not Found</title>
+                    <meta name="description" content="The coach you're looking for doesn't exist." />
+                </Head>
+                <div className="min-h-screen bg-bg py-20">
+                    <div className="container mx-auto px-4 lg:px-8 text-center">
                     <h1 className="text-2xl font-bold text-text mb-4">Coach Not Found</h1>
                     <p className="text-text-muted mb-8">The coach you're looking for doesn't exist.</p>
                     <Button onClick={() => router.push('/coaches')}>
                         Back to Coaches
                     </Button>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
@@ -149,9 +162,16 @@ export default function CoachProfilePage() {
         isAfter(parseISO(session.sessionDate), now)
     );
 
+    const coachName = coach?.name || 'Coach';
+
     return (
-        <div className="min-h-screen bg-bg py-20">
-            <div className="container mx-auto px-4 lg:px-8">
+        <>
+            <Head>
+                <title>Tiger Muay Thai - {coachName}</title>
+                <meta name="description" content={`${coachName} - Professional martial arts instructor at Tiger Muay Thai. View profile, schedule, and book private sessions.`} />
+            </Head>
+            <div className="min-h-screen bg-bg py-20">
+                <div className="container mx-auto px-4 lg:px-8">
                 {/* Back Button */}
                 <motion.button
                     initial={{ opacity: 0, x: -20 }}
@@ -471,32 +491,33 @@ export default function CoachProfilePage() {
                         </motion.div>
                     </div>
                 </div>
-            </div>
+                </div>
             
-            {/* Calendar Modal */}
-            <CoachCalendarModal
-                isOpen={calendarOpen}
-                onClose={() => setCalendarOpen(false)}
-                coachId={coachId}
-                coachName={coach?.name || 'Coach'}
-                bookedSessions={bookedSessions}
-            />
-            
-            {/* Private Session Booking Modal */}
-            {coach && (
-                <PrivateSessionBookingModal
-                    isOpen={bookingModalOpen}
-                    onClose={() => setBookingModalOpen(false)}
-                    coach={{
-                        id: coach.id,
-                        name: coach.name,
-                        photo: coach.photo,
-                        hourlyRate: coach.hourlyRate,
-                    }}
-                    onBookingSubmit={handleBookingSubmit}
-                    isSubmitting={isBookingSubmitting}
+                {/* Calendar Modal */}
+                <CoachCalendarModal
+                    isOpen={calendarOpen}
+                    onClose={() => setCalendarOpen(false)}
+                    coachId={coachId}
+                    coachName={coach?.name || 'Coach'}
+                    bookedSessions={bookedSessions}
                 />
-            )}
-        </div>
+            
+                {/* Private Session Booking Modal */}
+                {coach && (
+                    <PrivateSessionBookingModal
+                        isOpen={bookingModalOpen}
+                        onClose={() => setBookingModalOpen(false)}
+                        coach={{
+                            id: coach.id,
+                            name: coach.name,
+                            photo: coach.photo,
+                            hourlyRate: coach.hourlyRate,
+                        }}
+                        onBookingSubmit={handleBookingSubmit}
+                        isSubmitting={isBookingSubmitting}
+                    />
+                )}
+            </div>
+        </>
     );
 }

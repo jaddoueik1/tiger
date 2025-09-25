@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useClassTemplates, useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import {
@@ -52,8 +53,13 @@ export default function DisciplineDetailPage() {
 
   if (disciplinesLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Discipline Details</title>
+          <meta name="description" content="Learn about our martial arts disciplines and training programs." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-300 rounded w-32" />
             <div className="h-16 bg-gray-300 rounded" />
@@ -68,28 +74,42 @@ export default function DisciplineDetailPage() {
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!discipline) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Discipline Not Found</title>
+          <meta name="description" content="The discipline you're looking for doesn't exist." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Discipline Not Found</h1>
           <p className="text-text-muted mb-8">The discipline you're looking for doesn't exist.</p>
           <Button onClick={() => router.push('/disciplines')}>
             Back to Disciplines
           </Button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
+  const disciplineName = discipline.name || 'Discipline';
+
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - {disciplineName}</title>
+        <meta name="description" content={`Learn about ${disciplineName} training at Tiger Muay Thai. ${discipline.description || ''}`} />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -348,7 +368,8 @@ export default function DisciplineDetailPage() {
             </motion.div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

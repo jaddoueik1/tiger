@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
@@ -30,8 +31,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Sign In</title>
+        <meta name="description" content="Sign in to your Tiger Muay Thai account to book classes and manage your training." />
+      </Head>
+      <div className="min-h-screen bg-bg flex items-center justify-center py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,7 +136,8 @@ export default function LoginPage() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

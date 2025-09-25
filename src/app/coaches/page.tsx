@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
 import { usePrivateSessionBooking } from '@/hooks/useApi';
 import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
@@ -43,8 +44,13 @@ export default function CoachesPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-bg py-20">
-                <div className="container mx-auto px-4 lg:px-8">
+            <>
+                <Head>
+                    <title>Tiger Muay Thai - Our Coaches</title>
+                    <meta name="description" content="Train with world-class instructors who have competed at the highest levels and are passionate about teaching." />
+                </Head>
+                <div className="min-h-screen bg-bg py-20">
+                    <div className="container mx-auto px-4 lg:px-8">
                     <div className="text-center mb-16 animate-pulse">
                         <div className="h-16 bg-gray-300 rounded-lg w-80 mx-auto mb-4" />
                         <div className="h-6 bg-gray-300 rounded w-96 mx-auto" />
@@ -62,16 +68,22 @@ export default function CoachesPage() {
                             </div>
                         ))}
                     </div>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     const coaches = coachesData?.data || [];
 
     return (
-        <div className="min-h-screen bg-bg py-20">
-            <div className="container mx-auto px-4 lg:px-8">
+        <>
+            <Head>
+                <title>Tiger Muay Thai - Our Coaches</title>
+                <meta name="description" content="Train with world-class instructors who have competed at the highest levels and are passionate about teaching." />
+            </Head>
+            <div className="min-h-screen bg-bg py-20">
+                <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -179,26 +191,27 @@ export default function CoachesPage() {
                         </motion.div>
                     ))}
                 </div>
-            </div>
+                </div>
             
-            {/* Private Session Booking Modal */}
-            {selectedCoach && (
-                <PrivateSessionBookingModal
-                    isOpen={bookingModalOpen}
-                    onClose={() => {
-                        setBookingModalOpen(false);
-                        setSelectedCoach(null);
-                    }}
-                    coach={{
-                        id: selectedCoach.id,
-                        name: selectedCoach.name,
-                        photo: selectedCoach.photo,
-                        hourlyRate: selectedCoach.hourlyRate,
-                    }}
-                    onBookingSubmit={handleBookingSubmit}
-                    isSubmitting={isBooking}
-                />
-            )}
-        </div>
+                {/* Private Session Booking Modal */}
+                {selectedCoach && (
+                    <PrivateSessionBookingModal
+                        isOpen={bookingModalOpen}
+                        onClose={() => {
+                            setBookingModalOpen(false);
+                            setSelectedCoach(null);
+                        }}
+                        coach={{
+                            id: selectedCoach.id,
+                            name: selectedCoach.name,
+                            photo: selectedCoach.photo,
+                            hourlyRate: selectedCoach.hourlyRate,
+                        }}
+                        onBookingSubmit={handleBookingSubmit}
+                        isSubmitting={isBooking}
+                    />
+                )}
+            </div>
+        </>
     );
 }
