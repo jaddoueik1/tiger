@@ -45,7 +45,12 @@ export default function ShopPage() {
 
   const addProductToCart = (product: any) => {
     console.log('Adding product to cart:', product);
-    pushToCart(product);
+    pushToCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: product.images?.[0] // Add the first image
+    });
   }
 
   return (

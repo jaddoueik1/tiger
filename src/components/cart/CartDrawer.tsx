@@ -102,14 +102,22 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     key={item.id}
                     className="rounded-xl border p-3 flex items-center gap-3"
                   >
-                    {/* Placeholder thumb (replace with item image if you store it) */}
-                    <div className="h-16 w-16 rounded-md bg-gray-200 flex items-center justify-center text-gray-500 text-sm shrink-0">
-                      {item.name?.slice(0, 1) ?? '?'}
-                    </div>
+                    {/* Product image or placeholder */}
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-16 w-16 rounded-md object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="h-16 w-16 rounded-md bg-gray-200 flex items-center justify-center text-gray-500 text-sm shrink-0">
+                        {item.name?.slice(0, 1)?.toUpperCase() ?? 'P'}
+                      </div>
+                    )}
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start gap-3">
-                        <h3 className="font-medium truncate">{item.name}</h3>
+                        <h3 className="font-medium truncate">{item.name || 'Product'}</h3>
                         <button
                           aria-label="Remove item"
                           className="h-8 w-8 rounded-md border border-red-200 text-red-600 flex items-center justify-center hover:bg-red-50 shrink-0"
@@ -120,10 +128,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </div>
                       <div className="mt-1 flex items-center justify-between">
                         <span className="text-sm text-text-muted">
-                          Unit: ${item.price.toFixed(2)}
+                          Unit: ${(item.price || 0).toFixed(2)}
                         </span>
                         <span className="text-sm font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
                         </span>
                       </div>
 
@@ -135,7 +143,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="w-8 text-center">{item.quantity}</span>
+                        <span className="w-8 text-center">{item.quantity || 1}</span>
                         <button
                           aria-label="Increase"
                           className="h-8 w-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-50"
