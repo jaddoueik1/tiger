@@ -1,6 +1,7 @@
 // src/app/checkout/page.tsx
 'use client';
 
+import Head from 'next/head';
 import { useContent, useWhatsAppOrder } from '@/hooks/useApi';
 import { useCartStore } from '@/store/cartStore';
 import { Loader2 } from 'lucide-react';
@@ -106,8 +107,13 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="bg-bg text-text">
-      <section className="py-10 md:py-14">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Checkout</title>
+        <meta name="description" content="Complete your order and arrange delivery of your Tiger Muay Thai gear." />
+      </Head>
+      <main className="bg-bg text-text">
+        <section className="py-10 md:py-14">
         <div className="container mx-auto px-4 lg:px-8 grid lg:grid-cols-3 gap-8">
           {/* Left: Customer details */}
           <div className="lg:col-span-2">
@@ -274,8 +280,9 @@ export default function CheckoutPage() {
             </div>
           </aside>
         </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </>
   );
 }
 

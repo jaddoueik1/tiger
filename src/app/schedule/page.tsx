@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight, Clock, Users, MapPin } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
@@ -75,8 +76,13 @@ Please confirm my booking and let me know if you need any additional information
   };
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Class Schedule</title>
+          <meta name="description" content="Book your spot in upcoming classes. Real-time availability and instant confirmation." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
+          <div className="container mx-auto px-4 lg:px-8">
           <div className="animate-pulse">
             <div className="h-16 bg-gray-300 rounded-lg mb-8" />
             <div className="grid grid-cols-7 gap-4 mb-8">
@@ -90,14 +96,20 @@ Please confirm my booking and let me know if you need any additional information
               ))}
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Class Schedule</title>
+        <meta name="description" content="Book your spot in upcoming classes. Real-time availability and instant confirmation." />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -243,21 +255,22 @@ Please confirm my booking and let me know if you need any additional information
             </div>
           )}
         </motion.div>
-      </div>
+        </div>
       
-      {/* Class Booking Modal */}
-      {selectedSession && (
-        <ClassBookingModal
-          isOpen={bookingModalOpen}
-          onClose={() => {
-            setBookingModalOpen(false);
-            setSelectedSession(null);
-          }}
-          session={selectedSession}
-          onBookingSubmit={handleBookingSubmit}
-          isSubmitting={false}
-        />
-      )}
-    </div>
+        {/* Class Booking Modal */}
+        {selectedSession && (
+          <ClassBookingModal
+            isOpen={bookingModalOpen}
+            onClose={() => {
+              setBookingModalOpen(false);
+              setSelectedSession(null);
+            }}
+            session={selectedSession}
+            onBookingSubmit={handleBookingSubmit}
+            isSubmitting={false}
+          />
+        )}
+      </div>
+    </>
   );
 }
