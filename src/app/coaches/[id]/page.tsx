@@ -64,7 +64,7 @@ export default function CoachProfilePage() {
 
     const { config, isConfigLoading } = useWhatsAppOrder();
 
-    const { mutate: bookPrivateSession } = usePrivateSessionBooking();
+    const { bookPrivateSession, isBooking } = usePrivateSessionBooking();
 
     const sendWhatsAppMessage = () => {
         const message = "Hello, I'm interested in training with " + coach?.name + ". Could you provide more details?";
@@ -120,9 +120,7 @@ export default function CoachProfilePage() {
         setIsBookingSubmitting(true);
         
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
-            
-            bookPrivateSession({
+            await bookPrivateSession({
                 coachName: coach?.name || 'Coach',
                 name: bookingData.name,
                 email: bookingData.email,

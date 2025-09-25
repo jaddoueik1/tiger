@@ -362,21 +362,22 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
 export const usePrivateSessionBooking = () => {
   const { config, isConfigLoading } = useWhatsAppOrder();
 
-  const bookPrivateSession = (bookingData: {
-    coachName: string;
-    name: string;
-    email: string;
-    phone: string;
-    preferredDate: string;
-    preferredTime: string;
-    notes?: string;
-    hourlyRate?: number;
-  }) => {
-    if (!config?.phoneE164) {
-      throw new Error('WhatsApp contact number is not configured.');
-    }
+  const mutation = useMutation({
+    mutationFn: (bookingData: {
+      coachName: string;
+      name: string;
+      email: string;
+      phone: string;
+      preferredDate: string;
+      preferredTime: string;
+      notes?: string;
+      hourlyRate?: number;
+    }) => {
+      if (!config?.phoneE164) {
+        throw new Error('WhatsApp contact number is not configured.');
+      }
 
-    const message = `Hello! I'd like to book a private training session.
+      const message = `Hello! I'd like to book a private training session.
 
 📋 *Booking Details:*
 Coach: ${bookingData.coachName}
@@ -393,14 +394,32 @@ Phone: ${bookingData.phone}
 
 ${bookingData.notes ? `📝 *Additional Notes:*\n${bookingData.notes}\n\n` : ''}Please confirm availability and let me know the next steps.`;
 
-    const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
-    const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
-    
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
+      const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      
+      return Promise.resolve({ success: true });
+    },
+  });
+
+  const bookPrivateSession = (bookingData: {
+    coachName: string;
+    name: string;
+    email: string;
+    phone: string;
+    preferredDate: string;
+    preferredTime: string;
+    notes?: string;
+    hourlyRate?: number;
+  }) => {
+    return mutation.mutateAsync(bookingData);
   };
 
   return {
     bookPrivateSession,
+    isBooking: mutation.isPending,
+    error: mutation.error,
     isConfigLoading,
     config,
   };

@@ -11,10 +11,9 @@ import { useState } from 'react';
 
 export default function CoachesPage() {
     const { data: coachesData, isLoading } = useCoaches();
-    const { bookPrivateSession } = usePrivateSessionBooking();
+    const { bookPrivateSession, isBooking } = usePrivateSessionBooking();
     const [selectedCoach, setSelectedCoach] = useState<any>(null);
     const [bookingModalOpen, setBookingModalOpen] = useState(false);
-    const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
     const handleBookPrivate = (coach: any) => {
         setSelectedCoach(coach);
@@ -22,12 +21,8 @@ export default function CoachesPage() {
     };
 
     const handleBookingSubmit = async (bookingData: BookingFormData) => {
-        setIsBookingSubmitting(true);
-        
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
-            
-            bookPrivateSession({
+            await bookPrivateSession({
                 coachName: selectedCoach?.name || 'Coach',
                 name: bookingData.name,
                 email: bookingData.email,
@@ -43,8 +38,6 @@ export default function CoachesPage() {
         } catch (error) {
             console.error('Booking failed:', error);
             alert('Booking failed. Please try again.');
-        } finally {
-            setIsBookingSubmitting(false);
         }
     };
 
