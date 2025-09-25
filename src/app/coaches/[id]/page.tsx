@@ -29,6 +29,13 @@ import CoachCalendarModal from '@/components/CoachCalendarModal';
 import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
 import { usePrivateSessionBooking } from '@/hooks/useApi';
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: 'Tiger Muay Thai - Coach Profile',
+    description: 'View coach profile and book private training sessions.',
+  };
+}
+
 const socialIcons = {
     instagram: Instagram,
     facebook: Facebook,

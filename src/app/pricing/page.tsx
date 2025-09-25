@@ -6,6 +6,11 @@ import { Check, Star } from 'lucide-react';
 import { useMembershipPlans } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Membership Plans',
+  description: 'Choose the perfect membership plan for your training goals.',
+};
+
 export default function PricingPage() {
   const { data: plansData, isLoading } = useMembershipPlans();
   

@@ -6,6 +6,11 @@ import { useCartStore } from '@/store/cartStore';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Checkout',
+  description: 'Complete your order and arrange delivery.',
+};
+
 type Any = Record<string, any>;
 
 type FormState = {

@@ -9,6 +9,11 @@ import {
 } from 'lucide-react';
 import { useContent } from '@/hooks/useApi';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - About Us',
+  description: 'Learn about our world-class martial arts instructors and training philosophy.',
+};
+
 type AnyRec = Record<string, any>;
 
 // simple icon mapper so CMS can pass names like "target", "shieldCheck", etc.

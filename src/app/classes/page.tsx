@@ -8,6 +8,11 @@ import { motion } from 'framer-motion';
 import { Clock, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Classes',
+  description: 'Browse our diverse range of martial arts and fitness classes for all skill levels.',
+};
+
 export default function ClassesPage() {
   const [filters, setFilters] = useState({
     search: '',

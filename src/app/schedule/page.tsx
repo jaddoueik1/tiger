@@ -8,6 +8,11 @@ import { useClassSessions, useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
 import Button from '@/components/ui/Button';
 import ClassBookingModal, { ClassBookingFormData } from '@/components/ClassBookingModal';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Class Schedule',
+  description: 'View our class schedule and book your training sessions.',
+};
+
 export default function SchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState(new Date());

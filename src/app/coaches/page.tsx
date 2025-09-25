@@ -9,6 +9,11 @@ import { Award, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Our Coaches',
+  description: 'Meet our world-class martial arts instructors and book private training sessions.',
+};
+
 export default function CoachesPage() {
     const { data: coachesData, isLoading } = useCoaches();
     const { bookPrivateSession, isBooking } = usePrivateSessionBooking();

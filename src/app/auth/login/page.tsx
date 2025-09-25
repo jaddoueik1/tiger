@@ -8,6 +8,11 @@ import { useLogin } from '@/hooks/useApi';
 import { useAuthStore } from '@/store/authStore';
 import Button from '@/components/ui/Button';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - Sign In',
+  description: 'Sign in to your Tiger Muay Thai account.',
+};
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({

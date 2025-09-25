@@ -8,6 +8,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
+export const metadata = {
+  title: 'Tiger Muay Thai - My Account',
+  description: 'Manage your Tiger Muay Thai account and bookings.',
+};
+
 export default function AccountPage() {
   const router = useRouter();
 
