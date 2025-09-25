@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { useClassSessions, useCoach, useCoachAvailability, useWhatsAppOrder } from '@/hooks/useApi';
+import { useCoach, useCoachBookedSessions, useWhatsAppOrder } from '@/hooks/useApi';
 import { useAuthStore } from '@/store/authStore';
 import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import CoachCalendarModal from '@/components/CoachCalendarModal';
 
 const socialIcons = {
     instagram: Instagram,
@@ -45,6 +46,7 @@ export default function CoachProfilePage() {
     const router = useRouter();
     const { isAuthenticated } = useAuthStore();
     const [selectedWeek, setSelectedWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
+    const [calendarOpen, setCalendarOpen] = useState(false);
 
     const coachId = params.id as string;
 
@@ -54,6 +56,7 @@ export default function CoachProfilePage() {
 
     // Get coach booked sessions
     const { data: sessionsData, isLoading: sessionsLoading } = useCoachBookedSessions(coachId);
+    const bookedSessions = sessionsData?.data || [];
 
     const { config, isConfigLoading } = useWhatsAppOrder();
 
@@ -110,6 +113,11 @@ export default function CoachProfilePage() {
     };
 
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(selectedWeek, i));
+    
+    // Filter sessions for upcoming classes (non-private only)
+    const upcomingSessions = bookedSessions
+        .filter((session: any) => !session.isPrivate)
+        .slice(0, 5);
 
     return (
         <div className="min-h-screen bg-bg py-20">
@@ -282,35 +290,33 @@ export default function CoachProfilePage() {
                                 </div>
                             ) : upcomingSessions.length > 0 ? (
                                 <div className="space-y-4">
-                                    {upcomingSessions.slice(0, 5).map((session: any) => (
+                                    {upcomingSessions.map((session: any, index: number) => (
                                         <div
-                                            key={session.id}
+                                            key={index}
                                             className="border border-gray-200 rounded-lg p-4 hover:border-primary/30 transition-colors"
                                         >
                                             <div className="flex justify-between items-start mb-3">
                                                 <div>
-                                                    <h4 className="font-semibold text-text">{session.template?.title}</h4>
-                                                    <p className="text-sm text-primary">{session.discipline?.name}</p>
+                                                    <h4 className="font-semibold text-text">{session.name || 'Group Class'}</h4>
+                                                    <p className="text-sm text-primary">Group Session</p>
                                                 </div>
-                                                <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium">
-                                                    {session.template?.level?.replace('_', ' ').toUpperCase()}
-                                                </span>
+                                                {session.repetition && (
+                                                    <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium capitalize">
+                                                        {session.repetition}
+                                                    </span>
+                                                )}
                                             </div>
 
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-text-muted">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-text-muted">
                                                 <div className="flex items-center space-x-2">
                                                     <Calendar className="w-4 h-4" />
-                                                    <span>{format(parseISO(session.startAt), 'EEE, MMM d')}</span>
+                                                    <span>{format(parseISO(session.sessionDate), 'EEE, MMM d')}</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <Clock className="w-4 h-4" />
                                                     <span>
-                                                        {format(parseISO(session.startAt), 'h:mm a')} - {format(parseISO(session.endAt), 'h:mm a')}
+                                                        {format(parseISO(session.sessionDate), 'h:mm a')}
                                                     </span>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <MapPin className="w-4 h-4" />
-                                                    <span>{session.room}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -360,10 +366,10 @@ export default function CoachProfilePage() {
                             className="card"
                         >
                             <h3 className="text-lg font-semibold text-text mb-4">
-                                Availability - Week of {format(selectedWeek, 'MMM d')}
+                                Schedule Overview
                             </h3>
 
-                            {availabilityLoading ? (
+                            {sessionsLoading ? (
                                 <div className="space-y-2">
                                     {Array.from({ length: 7 }).map((_, i) => (
                                         <div key={i} className="animate-pulse">
@@ -374,9 +380,11 @@ export default function CoachProfilePage() {
                             ) : (
                                 <div className="space-y-2">
                                     {weekDays.map((day) => {
-                                        const dayAvailability = availability.filter((slot: any) =>
-                                            isSameDay(parseISO(slot.startAt), day)
+                                        const daySessions = bookedSessions.filter((session: any) =>
+                                            isSameDay(parseISO(session.sessionDate), day)
                                         );
+                                        const privateCount = daySessions.filter((s: any) => s.isPrivate).length;
+                                        const publicCount = daySessions.filter((s: any) => !s.isPrivate).length;
 
                                         return (
                                             <div key={day.toISOString()} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
@@ -384,9 +392,9 @@ export default function CoachProfilePage() {
                                                     {format(day, 'EEE, MMM d')}
                                                 </span>
                                                 <span className="text-xs text-text-muted">
-                                                    {dayAvailability.length > 0
-                                                        ? `${dayAvailability.length} slots`
-                                                        : 'Unavailable'
+                                                    {daySessions.length > 0
+                                                        ? `${publicCount} classes${privateCount > 0 ? `, ${privateCount} private` : ''}`
+                                                        : 'No sessions'
                                                     }
                                                 </span>
                                             </div>
@@ -395,7 +403,11 @@ export default function CoachProfilePage() {
                                 </div>
                             )}
 
-                            <Button variant="outline" className="w-full mt-4">
+                            <Button 
+                                variant="outline" 
+                                className="w-full mt-4"
+                                onClick={() => setCalendarOpen(true)}
+                            >
                                 View Full Calendar
                             </Button>
                         </motion.div>
@@ -426,6 +438,15 @@ export default function CoachProfilePage() {
                     </div>
                 </div>
             </div>
+            
+            {/* Calendar Modal */}
+            <CoachCalendarModal
+                isOpen={calendarOpen}
+                onClose={() => setCalendarOpen(false)}
+                coachId={coachId}
+                coachName={coach?.name || 'Coach'}
+                bookedSessions={bookedSessions}
+            />
         </div>
     );
 }

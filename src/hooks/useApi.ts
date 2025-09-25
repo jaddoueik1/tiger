@@ -36,6 +36,50 @@ export const useClassTemplate = (slug: string) => {
   });
 };
 
+// Class Sessions - using booked sessions filtered for non-private
+export const useClassSessions = (filters?: { date?: Date; disciplineId?: string }) => {
+  const { data: coachesData } = useCoaches();
+  const coaches = coachesData?.data || [];
+  
+  // Get all coach booked sessions
+  const sessionQueries = useQueries({
+    queries: coaches.map((coach: any) => ({
+      queryKey: ['coach-booked-sessions', coach.id],
+      queryFn: () => apiClient.getCoachBookedSessions(coach.id),
+      staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  const isLoading = sessionQueries.some(query => query.isLoading);
+  const allSessions = sessionQueries
+    .flatMap(query => query.data?.data || [])
+    .filter((session: any) => !session.isPrivate) // Only show non-private sessions
+    .map((session: any, index: number) => ({
+      ...session,
+      id: session.id || `session-${index}`,
+      coach: coaches.find((coach: any) => 
+        coach.bookedSessions?.some((bs: any) => bs.sessionDate === session.sessionDate)
+      ),
+    }));
+
+  // Apply filters
+  let filteredSessions = allSessions;
+  if (filters?.date) {
+    filteredSessions = filteredSessions.filter((session: any) =>
+      isSameDay(parseISO(session.sessionDate), filters.date!)
+    );
+  }
+  if (filters?.disciplineId) {
+    filteredSessions = filteredSessions.filter((session: any) =>
+      session.disciplineId === filters.disciplineId
+    );
+  }
+
+  return {
+    data: { data: filteredSessions },
+    isLoading,
+  };
+};
 // Coaches hooks
 export const useCoaches = (specialty?: string) => {
   return useQuery({
