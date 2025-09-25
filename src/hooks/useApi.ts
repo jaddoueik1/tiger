@@ -403,21 +403,8 @@ ${bookingData.notes ? `📝 *Additional Notes:*\n${bookingData.notes}\n\n` : ''}
     },
   });
 
-  const bookPrivateSession = (bookingData: {
-    coachName: string;
-    name: string;
-    email: string;
-    phone: string;
-    preferredDate: string;
-    preferredTime: string;
-    notes?: string;
-    hourlyRate?: number;
-  }) => {
-    return mutation.mutateAsync(bookingData);
-  };
-
   return {
-    bookPrivateSession,
+    bookPrivateSession: mutation.mutateAsync,
     isBooking: mutation.isPending,
     error: mutation.error,
     isConfigLoading,
