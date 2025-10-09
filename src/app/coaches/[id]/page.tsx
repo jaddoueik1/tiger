@@ -143,6 +143,12 @@ export default function CoachProfilePage() {
                 preferredTime: bookingData.preferredTime,
                 notes: bookingData.notes,
                 hourlyRate: coach?.hourlyRate,
+                mainInterest: bookingData.mainInterest,
+                goal: bookingData.goal,
+                medicalInformation: bookingData.medicalInformation,
+                dailyRoutine: bookingData.dailyRoutine,
+                physicalActivity: bookingData.physicalActivity,
+                nutrition: bookingData.nutrition,
             });
             
             setBookingModalOpen(false);

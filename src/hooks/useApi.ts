@@ -374,6 +374,12 @@ export const usePrivateSessionBooking = () => {
       preferredTime: string;
       notes?: string;
       hourlyRate?: number;
+      mainInterest?: string;
+      goal?: string;
+      medicalInformation?: string;
+      dailyRoutine?: string;
+      physicalActivity?: string;
+      nutrition?: string;
     }) => {
       if (!config?.phoneE164) {
         throw new Error('WhatsApp contact number is not configured.');
@@ -394,7 +400,7 @@ Phone: ${bookingData.phone}
 
 💰 *Payment Method:* Cash (pay at gym)
 
-${bookingData.notes ? `📝 *Additional Notes:*\n${bookingData.notes}\n\n` : ''}Please confirm availability and let me know the next steps.`;
+${bookingData.mainInterest ? `🥊 *Main Interest:* ${bookingData.mainInterest}\n\n` : ''}${bookingData.goal ? `🎯 *Main Goal:* ${bookingData.goal}\n\n` : ''}${bookingData.medicalInformation ? `🏥 *Medical Information:*\n${bookingData.medicalInformation}\n\n` : ''}${bookingData.dailyRoutine ? `📅 *Daily Routine:*\n${bookingData.dailyRoutine}\n\n` : ''}${bookingData.physicalActivity ? `💪 *Physical Activity:*\n${bookingData.physicalActivity}\n\n` : ''}${bookingData.nutrition ? `🥗 *Diet Habits:*\n${bookingData.nutrition}\n\n` : ''}${bookingData.notes ? `📝 *Additional Notes:*\n${bookingData.notes}\n\n` : ''}Please confirm availability and let me know the next steps.`;
 
       const phoneDigits = config.phoneE164.replace(/[^\d]/g, '');
       const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;

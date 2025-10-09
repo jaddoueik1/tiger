@@ -24,6 +24,12 @@ export interface BookingFormData {
   preferredDate: string;
   preferredTime: string;
   notes: string;
+  mainInterest?: string;
+  goal?: string;
+  medicalInformation?: string;
+  dailyRoutine?: string;
+  physicalActivity?: string;
+  nutrition?: string;
 }
 
 export default function PrivateSessionBookingModal({
@@ -41,6 +47,12 @@ export default function PrivateSessionBookingModal({
     preferredDate: '',
     preferredTime: '',
     notes: '',
+    mainInterest: '',
+    goal: '',
+    medicalInformation: '',
+    dailyRoutine: '',
+    physicalActivity: '',
+    nutrition: '',
   });
 
   const [errors, setErrors] = useState<Partial<BookingFormData>>({});
@@ -262,6 +274,110 @@ export default function PrivateSessionBookingModal({
                   placeholder="Any specific goals, experience level, or special requests..."
                   disabled={isSubmitting}
                 />
+              </div>
+            </div>
+
+            {/* Training Details */}
+            <div>
+              <h3 className="text-lg font-semibold text-text mb-4">Training Details</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Main Interest
+                  </label>
+                  <select
+                    value={formData.mainInterest}
+                    onChange={(e) => handleInputChange('mainInterest', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    disabled={isSubmitting}
+                  >
+                    <option value="">Select your main interest</option>
+                    <option value="MMA">MMA</option>
+                    <option value="Muay Thai">Muay Thai</option>
+                    <option value="Boxing">Boxing</option>
+                    <option value="Brazilian Jiu Jitsu">Brazilian Jiu Jitsu</option>
+                    <option value="Strength & Conditioning">Strength & Conditioning</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Main Goal
+                  </label>
+                  <select
+                    value={formData.goal}
+                    onChange={(e) => handleInputChange('goal', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    disabled={isSubmitting}
+                  >
+                    <option value="">Select your main goal</option>
+                    <option value="Lose weight">Lose weight</option>
+                    <option value="Tone body">Tone body</option>
+                    <option value="Amateur fighter">Amateur fighter</option>
+                    <option value="Professional fighter">Professional fighter</option>
+                    <option value="Learn new skills">Learn new skills</option>
+                    <option value="Self-Defense">Self-Defense</option>
+                    <option value="Stress relief">Stress relief</option>
+                    <option value="Have fun">Have fun</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Medical Information
+                  </label>
+                  <textarea
+                    value={formData.medicalInformation}
+                    onChange={(e) => handleInputChange('medicalInformation', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Any medications, previous surgeries, current illness/injury, or other medical information..."
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Your Daily Routine
+                  </label>
+                  <textarea
+                    value={formData.dailyRoutine}
+                    onChange={(e) => handleInputChange('dailyRoutine', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Describe your typical daily routine..."
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Physical Activity
+                  </label>
+                  <textarea
+                    value={formData.physicalActivity}
+                    onChange={(e) => handleInputChange('physicalActivity', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Do you exercise? If yes, what kind of activity (e.g., Body Building, Bike riding, Swimming, Jogging, Football, Basketball, Yoga, Other)..."
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text mb-2">
+                    Diet Habits / Nutrition
+                  </label>
+                  <textarea
+                    value={formData.nutrition}
+                    onChange={(e) => handleInputChange('nutrition', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Describe your diet habits and nutrition..."
+                    disabled={isSubmitting}
+                  />
+                </div>
               </div>
             </div>
 

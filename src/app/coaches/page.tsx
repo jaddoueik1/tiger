@@ -32,6 +32,12 @@ export default function CoachesPage() {
                 preferredTime: bookingData.preferredTime,
                 notes: bookingData.notes,
                 hourlyRate: selectedCoach?.hourlyRate,
+                mainInterest: bookingData.mainInterest,
+                goal: bookingData.goal,
+                medicalInformation: bookingData.medicalInformation,
+                dailyRoutine: bookingData.dailyRoutine,
+                physicalActivity: bookingData.physicalActivity,
+                nutrition: bookingData.nutrition,
             });
             
             setBookingModalOpen(false);
