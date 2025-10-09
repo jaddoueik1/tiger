@@ -139,7 +139,7 @@ Please let me know the next steps to get started with my membership!`;
 
               {/* Benefits */}
               <div className="space-y-3 mb-8">
-                {plan.benefits.map((benefit, i) => (
+                {plan.benefits.map((benefit: string, i: number) => (
                   <div key={i} className="flex items-start space-x-3">
                     <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                     <span className="text-text-muted">{benefit}</span>

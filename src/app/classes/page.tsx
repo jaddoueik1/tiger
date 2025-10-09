@@ -10,6 +10,9 @@ import { useState } from 'react';
 export default function ClassesPage() {
   const [filters, setFilters] = useState({
     search: '',
+    discipline: '',
+    level: '',
+    coachId: '',
   });
 
   const { data: disciplinesData } = useDisciplines();

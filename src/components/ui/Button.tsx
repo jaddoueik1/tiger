@@ -16,7 +16,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
-  
+
   const variants = {
     primary: 'bg-primary text-white hover:bg-primary-700 focus:ring-primary-500',
     secondary: 'bg-secondary text-white hover:bg-secondary-700 focus:ring-secondary-500',
@@ -31,9 +31,7 @@ export default function Button({
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+    <button
       className={cn(
         baseClasses,
         variants[variant],
@@ -43,6 +41,6 @@ export default function Button({
       {...props}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }

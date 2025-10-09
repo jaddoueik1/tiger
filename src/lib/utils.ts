@@ -14,12 +14,14 @@ export function formatCurrency(amount: number, currency = 'USD') {
 
 export function formatDate(date: Date | string, format = 'medium') {
   const d = typeof date === 'string' ? new Date(date) : date;
-  
-  const options: Intl.DateTimeFormatOptions = {
+
+  const formatOptions: Record<string, Intl.DateTimeFormatOptions> = {
     short: { month: 'short', day: 'numeric' },
     medium: { month: 'long', day: 'numeric', year: 'numeric' },
     long: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
-  }[format] || {};
+  };
+
+  const options = formatOptions[format] || {};
 
   return new Intl.DateTimeFormat('en-US', options).format(d);
 }

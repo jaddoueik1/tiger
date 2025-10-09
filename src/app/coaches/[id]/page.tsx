@@ -323,6 +323,26 @@ export default function CoachProfilePage() {
                             </motion.div>
                         )}
 
+                        {/* Championships */}
+                        {coach.championships && coach.championships.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.25 }}
+                                className="card"
+                            >
+                                <h2 className="text-2xl font-bold text-text mb-6">Championships</h2>
+                                <div className="space-y-4">
+                                    {coach.championships.map((championship: string, index: number) => (
+                                        <div key={index} className="flex items-start space-x-3">
+                                            <Award className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                                            <span className="text-text-muted">{championship}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Upcoming Sessions */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}

@@ -145,7 +145,7 @@ export default function DisciplinesPage() {
 
                 {/* Actions */}
                 <div className="flex space-x-3">
-                  <Link href={`/disciplines/${discipline.slug}`} className="flex-1">
+                  <Link href={`/discipline/${discipline.slug}`} className="flex-1">
                     <Button variant="primary" size="sm" className="w-full">
                       Learn More
                     </Button>

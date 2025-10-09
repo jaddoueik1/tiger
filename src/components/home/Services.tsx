@@ -11,7 +11,7 @@ import {
     Sparkles,
     Swords,
     Users,
-    type Icon as LucideIcon,
+    type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -166,7 +166,7 @@ export default function Services() {
                                         <div>
                                             <div className="mt-6">
                                                 <Link
-                                                    href={href}
+                                                    href={href as any}
                                                     className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition-opacity"
                                                 >
                                                     {ctaLabel}
@@ -183,7 +183,7 @@ export default function Services() {
                 {sectionCta?.href && sectionCta?.label && (
                     <div className="text-center mt-12">
                         <Link
-                            href={sectionCta.href}
+                            href={sectionCta.href as any}
                             className="inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-surface ring-1 ring-white/5 text-text hover:bg-surface/80 transition-colors"
                         >
                             {sectionCta.label}

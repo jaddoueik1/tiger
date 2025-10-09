@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Users, Target, ShieldCheck, Sparkles, Award, HeartPulse, Swords,
-  Linkedin, Instagram, Facebook, Youtube, type Icon as LucideIcon
+  Linkedin, Instagram, Facebook, Youtube, type LucideIcon
 } from 'lucide-react';
 import { useContent } from '@/hooks/useApi';
 

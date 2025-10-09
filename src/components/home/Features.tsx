@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Target, Users, Trophy, Clock, DivideIcon as LucideIcon } from 'lucide-react';
+import { Target, Users, Trophy, Clock, type LucideIcon } from 'lucide-react';
 import { useContent } from '@/hooks/useApi';
 
 const iconMap: { [key: string]: LucideIcon } = {

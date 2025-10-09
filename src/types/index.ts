@@ -74,6 +74,7 @@ export interface Coach {
   name: string;
   bio: string;
   accolades: string[];
+  championships: string[];
   socials: SocialLink[];
   photo: string;
   specialties: string[];

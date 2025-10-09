@@ -98,12 +98,8 @@ export default function Footer() {
             © {new Date().getFullYear()} Tiger Muay Thai. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link href="/policies/privacy" className="text-gray-400 hover:text-accent text-sm transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/policies/terms" className="text-gray-400 hover:text-accent text-sm transition-colors">
-              Terms of Service
-            </Link>
+            <span className="text-gray-400 text-sm">Privacy Policy</span>
+            <span className="text-gray-400 text-sm">Terms of Service</span>
           </div>
         </div>
       </div>

@@ -6,6 +6,9 @@ interface User {
   email: string;
   name: string;
   roles: string[];
+  createdAt?: string | Date;
+  avatarUrl?: string;
+  role?: string;
 }
 
 interface AuthState {

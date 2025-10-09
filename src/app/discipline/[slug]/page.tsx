@@ -77,7 +77,7 @@ export default function DisciplineDetailPage() {
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Discipline Not Found</h1>
           <p className="text-text-muted mb-8">The discipline you're looking for doesn't exist.</p>
-          <Button onClick={() => router.push('/disciplines')}>
+          <Button onClick={() => router.push('/discipline')}>
             Back to Disciplines
           </Button>
         </div>

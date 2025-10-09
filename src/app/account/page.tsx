@@ -67,9 +67,9 @@ export default function AccountPage() {
           >
             You need to be signed in to view your account.
           </motion.p>
-          <Button asChild variant="primary">
-            <Link href="/auth/login">Sign In</Link>
-          </Button>
+          <Link href="/auth/login">
+            <Button variant="primary">Sign In</Button>
+          </Link>
           </div>
         </div>
       </>
@@ -149,9 +149,7 @@ export default function AccountPage() {
           </div>
 
           <div className="hidden sm:block">
-            <Button asChild variant="ghost">
-              <Link href="/account/edit">Edit Profile</Link>
-            </Button>
+            <Button variant="ghost">Edit Profile</Button>
           </div>
         </motion.section>
 
@@ -162,21 +160,15 @@ export default function AccountPage() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4"
         >
-          <Link
-            href="/orders"
-            className="bg-surface rounded-xl p-5 shadow-sm hover:shadow transition-shadow"
-          >
+          <div className="bg-surface rounded-xl p-5 shadow-sm">
             <div className="text-sm text-text-muted">Orders</div>
             <div className="text-lg font-semibold">View your order history</div>
-          </Link>
+          </div>
 
-          <Link
-            href="/settings/security"
-            className="bg-surface rounded-xl p-5 shadow-sm hover:shadow transition-shadow"
-          >
+          <div className="bg-surface rounded-xl p-5 shadow-sm">
             <div className="text-sm text-text-muted">Security</div>
             <div className="text-lg font-semibold">Update password & sessions</div>
-          </Link>
+          </div>
         </motion.section>
         </div>
       </div>
