@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import { Clock, Target, TrendingUp, Users } from 'lucide-react';
@@ -11,7 +12,12 @@ export default function DisciplinesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Disciplines</title>
+          <meta name="description" content="Explore our martial arts disciplines including Muay Thai, Boxing, BJJ, and MMA." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16 animate-pulse">
             <div className="h-16 bg-gray-300 rounded-lg w-80 mx-auto mb-4" />
@@ -36,6 +42,7 @@ export default function DisciplinesPage() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
@@ -56,11 +63,16 @@ export default function DisciplinesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+    <>
+      <Head>
+        <title>Tiger Muay Thai - Disciplines</title>
+        <meta name="description" content="Explore our martial arts disciplines including Muay Thai, Boxing, BJJ, and MMA." />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
@@ -196,5 +208,6 @@ export default function DisciplinesPage() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }

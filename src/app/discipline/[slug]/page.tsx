@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
+import Head from 'next/head';
 import { useClassTemplate, useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import {
@@ -50,7 +51,12 @@ export default function DisciplineDetailPage() {
 
   if (disciplinesLoading) {
     return (
-      <div className="min-h-screen bg-bg py-20">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Discipline</title>
+          <meta name="description" content="Learn more about our martial arts disciplines." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-300 rounded w-32" />
@@ -68,12 +74,18 @@ export default function DisciplineDetailPage() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
   if (!discipline) {
     return (
-      <div className="min-h-screen bg-bg py-20">
+      <>
+        <Head>
+          <title>Tiger Muay Thai - Discipline Not Found</title>
+          <meta name="description" content="The discipline you're looking for doesn't exist." />
+        </Head>
+        <div className="min-h-screen bg-bg py-20">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Discipline Not Found</h1>
           <p className="text-text-muted mb-8">The discipline you're looking for doesn't exist.</p>
@@ -82,22 +94,28 @@ export default function DisciplineDetailPage() {
           </Button>
         </div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-bg py-20">
-      <div className="container mx-auto px-4 lg:px-8">
-        {/* Back Button */}
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          onClick={() => router.back()}
-          className="flex items-center space-x-2 text-text-muted hover:text-text mb-8 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          <span>Back to Disciplines</span>
-        </motion.button>
+    <>
+      <Head>
+        <title>Tiger Muay Thai - {discipline.name}</title>
+        <meta name="description" content={discipline.description} />
+      </Head>
+      <div className="min-h-screen bg-bg py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          {/* Back Button */}
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={() => router.back()}
+            className="flex items-center space-x-2 text-text-muted hover:text-text mb-8 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span>Back to Disciplines</span>
+          </motion.button>
 
         <div className="grid md:grid-cols-3 gap-12">
           {/* Main Content */}
@@ -348,5 +366,6 @@ export default function DisciplineDetailPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
