@@ -1,15 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import { Calendar, ChevronLeft, ChevronRight, Clock, Users, MapPin } from 'lucide-react';
-import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
-import { useClassSessions, useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
-import Button from '@/components/ui/Button';
 import ClassBookingModal, { ClassBookingFormData } from '@/components/ClassBookingModal';
+import Button from '@/components/ui/Button';
+import { useClassSessions, useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
+import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
+import { motion } from 'framer-motion';
+import { Calendar, ChevronLeft, ChevronRight, Clock, Users } from 'lucide-react';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export default function SchedulePage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Schedule';
+  }, []);
+
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedSession, setSelectedSession] = useState<any>(null);
@@ -176,6 +180,18 @@ Please confirm my booking and let me know if you need any additional information
               </button>
             ))}
           </div>
+        </motion.div>
+
+        {/* Private Classes Message */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-center mb-8"
+        >
+          <span className="text-lg text-text-muted">
+            Private classes are available also on demand, with coaches with various expertise
+          </span>
         </motion.div>
 
         {/* Sessions for Selected Day */}

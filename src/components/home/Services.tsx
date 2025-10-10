@@ -66,7 +66,7 @@ export default function Services() {
     const content = data?.data || {};
     const title: string | undefined = content.title;
     const subtitle: string | undefined = content.subtitle;
-    const items: any[] = Array.isArray(content.items) ? content.items : [];
+    const items: any[] = Array.isArray(content.items) ? content.items.sort((a, b) => a.order - b.order) : [];
     const sectionCta = content.cta as { label?: string; href?: string } | undefined;
 
     if (!items.length) return null;

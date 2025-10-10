@@ -1,15 +1,19 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Head from 'next/head';
 import { useAuthStore } from '@/store/authStore';
 import { motion } from 'framer-motion';
 import { LogOut, Mail, Shield, User as UserIcon } from 'lucide-react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 export default function AccountPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Account';
+  }, []);
+
   const router = useRouter();
 
   // Expecting these from your store:

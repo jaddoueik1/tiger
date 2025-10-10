@@ -19,7 +19,7 @@ import {
 import Head from 'next/head';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const difficultyColors = {
   beginner: 'bg-green-100 text-green-800',
@@ -41,6 +41,11 @@ export default function ClassDetailPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Class Details';
+    }, []);
+    
   
   const classId = params.id as string;
   

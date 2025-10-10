@@ -1,10 +1,16 @@
-import Head from 'next/head';
+'use client';
 import Features from '@/components/home/Features';
 import Hero from '@/components/home/Hero';
 import Services from '@/components/home/Services';
 import Testimonials from '@/components/home/Testimonials';
+import Head from 'next/head';
+import { useEffect } from 'react';
 
 export default function HomePage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Home';
+  }, []);
+
   return (
     <>
       <Head>

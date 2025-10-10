@@ -1,14 +1,18 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Head from 'next/head';
 import { useProducts } from '@/hooks/useApi';
 import { useCartStore } from '@/store/cartStore';
 import { motion } from 'framer-motion';
 import { Search, ShoppingCart, Star } from 'lucide-react';
-import { useState } from 'react';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export default function ShopPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Shop';
+  }, []);
+
   const [filters, setFilters] = useState({
     search: '',
     categoryId: '',

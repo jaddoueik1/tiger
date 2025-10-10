@@ -1,15 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import Button from '@/components/ui/Button';
 import { useLogin } from '@/hooks/useApi';
 import { useAuthStore } from '@/store/authStore';
-import Button from '@/components/ui/Button';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import Head from 'next/head';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function LoginPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Login';
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',

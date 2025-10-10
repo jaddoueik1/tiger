@@ -1,13 +1,18 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Head from 'next/head';
 import { useDisciplines } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import { Clock, Target, TrendingUp, Users } from 'lucide-react';
+import Head from 'next/head';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function DisciplinesPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Disciplines';
+  }, []);
+
   const { data: disciplinesData, isLoading } = useDisciplines();
 
   if (isLoading) {

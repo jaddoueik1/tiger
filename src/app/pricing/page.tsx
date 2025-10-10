@@ -1,14 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-import Head from 'next/head';
+import MembershipModal, { MembershipFormData } from '@/components/MembershipModal';
+import Button from '@/components/ui/Button';
+import { useMembershipPlans, useWhatsAppOrder } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
-import { useMembershipPlans, useWhatsAppOrder } from '@/hooks/useApi';
-import Button from '@/components/ui/Button';
-import MembershipModal, { MembershipFormData } from '@/components/MembershipModal';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export default function PricingPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Pricing';
+  }, []);
+
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   

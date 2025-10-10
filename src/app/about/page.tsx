@@ -1,14 +1,22 @@
 'use client';
 
-import * as React from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
+import { useContent } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
 import {
-  Users, Target, ShieldCheck, Sparkles, Award, HeartPulse, Swords,
-  Linkedin, Instagram, Facebook, Youtube, type LucideIcon
+    Award,
+    Facebook,
+    HeartPulse,
+    Instagram,
+    Linkedin,
+    ShieldCheck, Sparkles,
+    Swords,
+    Target,
+    Users,
+    Youtube, type LucideIcon
 } from 'lucide-react';
-import { useContent } from '@/hooks/useApi';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 
 type AnyRec = Record<string, any>;
@@ -41,6 +49,10 @@ function SectionSkeleton({ rows = 3 }: { rows?: number }) {
 }
 
 export default function AboutPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - About';
+  }, []);
+
   const { data: hero, isLoading: lHero } = useContent('about.hero');
   const { data: mission, isLoading: lMission } = useContent('about.mission');
   const { data: values, isLoading: lValues } = useContent('about.values');

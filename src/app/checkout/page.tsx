@@ -1,11 +1,12 @@
 // src/app/checkout/page.tsx
 'use client';
 
-import Head from 'next/head';
 import { useContent, useWhatsAppOrder } from '@/hooks/useApi';
 import { useCartStore } from '@/store/cartStore';
 import { Loader2 } from 'lucide-react';
+import Head from 'next/head';
 import * as React from 'react';
+import { useEffect } from 'react';
 
 type Any = Record<string, any>;
 
@@ -39,6 +40,10 @@ function validate(values: FormState): FormErrors {
 }
 
 export default function CheckoutPage() {
+  useEffect(() => {
+    document.title = 'Tiger Muay Thai - Checkout';
+  }, []);
+
   const { data: labelsRes } = useContent('checkout.page');
   const L = labelsRes?.data ?? {};
 
