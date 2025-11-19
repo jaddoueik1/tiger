@@ -1,7 +1,8 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { useProducts } from '@/hooks/useApi';
+import Pagination from '@/components/ui/Pagination';
+import { useProducts, useProductCategories } from '@/hooks/useApi';
 import { useCartStore } from '@/store/cartStore';
 import { motion } from 'framer-motion';
 import { Search, ShoppingCart, Star } from 'lucide-react';
@@ -14,13 +15,15 @@ export default function ShopPage() {
   }, []);
 
   const [filters, setFilters] = useState({
-    search: '',
+    query: '',
     categoryId: '',
     sort: '',
     page: 1,
+    limit: 12,
   });
 
   const { data: productsData, isLoading } = useProducts(filters);
+  const { data: categoriesData, isLoading: categoriesLoading } = useProductCategories();
   const { pushToCart, removeFromCart, clearCart } = useCartStore();
 
   if (isLoading) {
@@ -53,6 +56,8 @@ export default function ShopPage() {
   }
 
   const products = productsData?.data || [];
+  const categories = categoriesData?.data || [];
+  const meta = productsData?.meta || { page: 1, totalPages: 1 };
 
   const addProductToCart = (product: any) => {
     console.log('Adding product to cart:', product);
@@ -106,8 +111,8 @@ export default function ShopPage() {
               <input
                 type="text"
                 placeholder="Search products..."
-                value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                value={filters.query}
+                onChange={(e) => setFilters({ ...filters, query: e.target.value, page: 1 })}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
@@ -115,21 +120,22 @@ export default function ShopPage() {
             {/* Category Filter */}
             <select
               value={filters.categoryId}
-              onChange={(e) => setFilters({ ...filters, categoryId: e.target.value })}
+              onChange={(e) => setFilters({ ...filters, categoryId: e.target.value, page: 1 })}
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              disabled={categoriesLoading}
             >
               <option value="">All Categories</option>
-              <option value="1">Gi & Uniforms</option>
-              <option value="2">Gloves & Protection</option>
-              <option value="3">Apparel</option>
-              <option value="4">Accessories</option>
-              <option value="5">Supplements</option>
+              {categories.map((category: any) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
 
             {/* Sort */}
             <select
               value={filters.sort}
-              onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+              onChange={(e) => setFilters({ ...filters, sort: e.target.value, page: 1 })}
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="">Featured</option>
@@ -158,13 +164,13 @@ export default function ShopPage() {
               {/* Product Image */}
               <div className="relative mb-4 overflow-hidden rounded-lg">
                 <img
-                  src={product.images[0]}
+                  src={product.images?.[0] || 'https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg'}
                   alt={product.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                {product.compareAtPrice && (
+                {product.compare_at_price && (
                   <div className="absolute top-2 right-2 bg-primary text-white px-2 py-1 rounded text-sm font-medium">
-                    Save ${product.compareAtPrice - product.price}
+                    Save ${(product.compare_at_price - product.price).toFixed(2)}
                   </div>
                 )}
               </div>
@@ -182,10 +188,10 @@ export default function ShopPage() {
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-xl font-bold text-text">${product.price}</span>
-                    {product.compareAtPrice && (
+                    <span className="text-xl font-bold text-text">${Number(product.price).toFixed(2)}</span>
+                    {product.compare_at_price && (
                       <span className="text-sm text-text-muted line-through ml-2">
-                        ${product.compareAtPrice}
+                        ${Number(product.compare_at_price).toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -221,12 +227,20 @@ export default function ShopPage() {
           ))}
         </motion.div>
 
-        {products.length === 0 && (
+        {products.length === 0 && !isLoading && (
           <div className="text-center py-16">
             <p className="text-text-muted text-lg">
               No products found matching your criteria.
             </p>
           </div>
+        )}
+
+        {products.length > 0 && (
+          <Pagination
+            currentPage={meta.page}
+            totalPages={meta.totalPages}
+            onPageChange={(page) => setFilters({ ...filters, page })}
+          />
         )}
         </div>
       </div>
