@@ -199,7 +199,7 @@ export interface ProductAttribute {
 }
 
 export interface ProductCategory {
-  id: string;
+  _id: string;
   name: string;
   slug: string;
   description?: string;

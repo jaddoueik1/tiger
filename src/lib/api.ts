@@ -251,16 +251,9 @@ class ApiClient {
 
   // Shop API
   async getProductCategories() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) {
-      throw new Error('NEXT_PUBLIC_SUPABASE_URL is not defined');
-    }
-    const url = `${supabaseUrl}/functions/v1/get-product-categories`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch categories');
-    }
-    return response.json();
+    return this.request<any>(`/api/shop/categories`, {
+      method: 'GET',
+    });
   }
 
   async getProducts(params?: {
@@ -271,24 +264,9 @@ class ApiClient {
     page?: number;
     limit?: number;
   }) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) {
-      throw new Error('NEXT_PUBLIC_SUPABASE_URL is not defined');
-    }
-    const searchParams = new URLSearchParams();
-    if (params?.query) searchParams.set('query', params.query);
-    if (params?.categoryId) searchParams.set('categoryId', params.categoryId);
-    if (params?.inStock !== undefined) searchParams.set('inStock', params.inStock.toString());
-    if (params?.sort) searchParams.set('sort', params.sort);
-    if (params?.page) searchParams.set('page', params.page.toString());
-    if (params?.limit) searchParams.set('limit', params.limit.toString());
-
-    const url = `${supabaseUrl}/functions/v1/get-products?${searchParams}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
-    }
-    return response.json();
+    return this.request<any>(`/api/shop/products?page=${params?.page}&size=${params?.limit}&categoryId=${params?.categoryId}&inStock=${params?.inStock}&sort=${params?.sort}`, {
+      method: 'GET',
+    });
   }
 
   async getProduct(id: string) {

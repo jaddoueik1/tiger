@@ -119,6 +119,7 @@ export const useProducts = (params?: {
   page?: number;
   limit?: number;
 }) => {
+    console.log(params);
   return useQuery({
     queryKey: ['products', params],
     queryFn: () => apiClient.getProducts(params),
