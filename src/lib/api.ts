@@ -153,6 +153,10 @@ class ApiClient {
     return this.request<any>(`/api/classes/templates/discipline/${slug}`);
   }
 
+  async getClassTemplateById(id: string) {
+    return this.request<any>(`/api/classes/templates/${id}`);
+  }
+
   async createClassTemplate(template: any) {
     return this.request<any>('/api/classes/templates', {
       method: 'POST',

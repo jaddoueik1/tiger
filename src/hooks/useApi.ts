@@ -37,6 +37,15 @@ export const useClassTemplate = (slug: string) => {
   });
 };
 
+export const useClassTemplateById = (id: string) => {
+  return useQuery({
+    queryKey: ['class-template', id],
+    queryFn: () => apiClient.getClassTemplateById(id),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!id,
+  });
+};
+
 // Class Sessions - using booked sessions filtered for non-private
 export const useClassSessions = (filters?: { date?: Date; disciplineId?: string }) => {
   // Get all coaches' booked sessions in one call
