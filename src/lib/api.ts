@@ -1,4 +1,4 @@
-const isProd = false;
+const isProd = true;
 const API_BASE_URL = isProd
 	? "https://api.tigermuaythai.me"
 	: "http://localhost:3001";
