@@ -1,342 +1,380 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tigermuaythai.me';
+const isProd = false;
+const API_BASE_URL = isProd
+	? "https://api.tigermuaythai.me"
+	: "http://localhost:3001";
+
+import { Evaluation } from "@/types/evaluation";
 
 export interface ApiResponse<T> {
-  data: T;
-  meta?: {
-    page?: number;
-    limit?: number;
-    total?: number;
-    totalPages?: number;
-  };
+	data: T;
+	meta?: {
+		page?: number;
+		limit?: number;
+		total?: number;
+		totalPages?: number;
+	};
 }
 
 export interface ApiError {
-  error: string;
-  message: string;
-  statusCode?: number;
-  details?: any;
+	error: string;
+	message: string;
+	statusCode?: number;
+	details?: any;
 }
 
 class ApiClient {
-  private baseUrl: string;
-  private token: string | null = null;
+	private baseUrl: string;
+	private token: string | null = null;
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth_token');
-    }
-  }
+	constructor(baseUrl: string) {
+		this.baseUrl = baseUrl;
+		if (typeof window !== "undefined") {
+			this.token = localStorage.getItem("auth_token");
+		}
+	}
 
-  setToken(token: string) {
-    this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('auth_token', token);
-    }
-  }
+	setToken(token: string) {
+		this.token = token;
+		if (typeof window !== "undefined") {
+			localStorage.setItem("auth_token", token);
+		}
+	}
 
-  clearToken() {
-    this.token = null;
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
-    }
-  }
+	clearToken() {
+		this.token = null;
+		if (typeof window !== "undefined") {
+			localStorage.removeItem("auth_token");
+		}
+	}
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResponse<T>> {
-    const url = `${this.baseUrl}${endpoint}`;
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+	private async request<T>(
+		endpoint: string,
+		options: RequestInit = {}
+	): Promise<ApiResponse<T>> {
+		const url = `${this.baseUrl}${endpoint}`;
 
-    if (options.headers) {
-      Object.assign(headers, options.headers);
-    }
+		const headers: Record<string, string> = {
+			"Content-Type": "application/json",
+		};
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
+		if (options.headers) {
+			Object.assign(headers, options.headers);
+		}
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+		if (this.token) {
+			headers["Authorization"] = `Bearer ${this.token}`;
+		}
 
-    if (!response.ok) {
-      const errorData: ApiError = await response.json().catch(() => ({
-        error: 'Network Error',
-        message: 'Failed to parse error response',
-        statusCode: response.status,
-      }));
-      throw errorData;
-    }
+		const response = await fetch(url, {
+			...options,
+			headers,
+		});
 
-    return response.json();
-  }
+		if (!response.ok) {
+			const errorData: ApiError = await response.json().catch(() => ({
+				error: "Network Error",
+				message: "Failed to parse error response",
+				statusCode: response.status,
+			}));
+			throw errorData;
+		}
 
-  // Health check
-  async getHealth() {
-    return this.request<{ status: string; timestamp: string }>('/health');
-  }
+		return response.json();
+	}
 
-  // Content API
-  async getContent(key: string, locale = 'en') {
-    return this.request<any>(`/api/content/${key}?locale=${locale}`);
-  }
+	// Health check
+	async getHealth() {
+		return this.request<{ status: string; timestamp: string }>("/health");
+	}
 
-  async updateContent(key: string, json: any, locale = 'en') {
-    return this.request<any>(`/api/content/${key}`, {
-      method: 'PUT',
-      body: JSON.stringify({ json, locale }),
-    });
-  }
+	// Content API
+	async getContent(key: string, locale = "en") {
+		return this.request<any>(`/api/content/${key}?locale=${locale}`);
+	}
 
-  async deleteContent(key: string, locale = 'en') {
-    return this.request<any>(`/api/content/${key}?locale=${locale}`, {
-      method: 'DELETE',
-    });
-  }
+	async updateContent(key: string, json: any, locale = "en") {
+		return this.request<any>(`/api/content/${key}`, {
+			method: "PUT",
+			body: JSON.stringify({ json, locale }),
+		});
+	}
 
-  // Auth API
-  async login(email: string, password: string) {
-    return this.request<{ token: string; user: any }>('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-  }
+	async deleteContent(key: string, locale = "en") {
+		return this.request<any>(`/api/content/${key}?locale=${locale}`, {
+			method: "DELETE",
+		});
+	}
 
-  async register(userData: {
-    email: string;
-    password: string;
-    name: string;
-    phone?: string;
-  }) {
-    return this.request<{ token: string; user: any }>('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-  }
+	// Auth API
+	async login(email: string, password: string) {
+		return this.request<{ token: string; user: any }>("/api/auth/login", {
+			method: "POST",
+			body: JSON.stringify({ email, password }),
+		});
+	}
 
-  // Classes API
-  async getDisciplines() {
-    return this.request<any[]>('/api/classes/disciplines');
-  }
+	async changePassword(password: string) {
+		return this.request<{ success: boolean }>("/api/auth/change-password", {
+			method: "POST",
+			body: JSON.stringify({ newPassword: password }),
+		});
+	}
 
-  async createDiscipline(discipline: any) {
-    return this.request<any>('/api/classes/disciplines', {
-      method: 'POST',
-      body: JSON.stringify(discipline),
-    });
-  }
+	async register(userData: {
+		email: string;
+		password: string;
+		name: string;
+		phone?: string;
+	}) {
+		return this.request<{ token: string; user: any }>("/api/auth/register", {
+			method: "POST",
+			body: JSON.stringify(userData),
+		});
+	}
 
-  async updateDiscipline(id: string, discipline: any) {
-    return this.request<any>(`/api/classes/disciplines/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(discipline),
-    });
-  }
+	// Classes API
+	async getDisciplines() {
+		return this.request<any[]>("/api/classes/disciplines");
+	}
 
-  async deleteDiscipline(id: string) {
-    return this.request<{ success: boolean }>(`/api/classes/disciplines/${id}`, {
-      method: 'DELETE',
-    });
-  }
+	async createDiscipline(discipline: any) {
+		return this.request<any>("/api/classes/disciplines", {
+			method: "POST",
+			body: JSON.stringify(discipline),
+		});
+	}
 
-  async getClassTemplates() {
-    return this.request<any[]>('/api/classes/templates');
-  }
+	async updateDiscipline(id: string, discipline: any) {
+		return this.request<any>(`/api/classes/disciplines/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(discipline),
+		});
+	}
 
-  async getClassTemplate(slug: string) {
-    return this.request<any>(`/api/classes/templates/discipline/${slug}`);
-  }
+	async deleteDiscipline(id: string) {
+		return this.request<{ success: boolean }>(
+			`/api/classes/disciplines/${id}`,
+			{
+				method: "DELETE",
+			}
+		);
+	}
 
-  async getClassTemplateById(id: string) {
-    return this.request<any>(`/api/classes/templates/${id}`);
-  }
+	async getClassTemplates() {
+		return this.request<any[]>("/api/classes/templates");
+	}
 
-  async createClassTemplate(template: any) {
-    return this.request<any>('/api/classes/templates', {
-      method: 'POST',
-      body: JSON.stringify(template),
-    });
-  }
+	async getClassTemplateById(id: string) {
+		return this.request<any>(`/api/classes/templates/${id}`);
+	}
 
-  async updateClassTemplate(id: string, template: any) {
-    return this.request<any>(`/api/classes/templates/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(template),
-    });
-  }
+	async getClassTemplate(slug: string) {
+		return this.request<any>(`/api/classes/templates/discipline/${slug}`);
+	}
 
-  async deleteClassTemplate(id: string) {
-    return this.request<{ success: boolean }>(`/api/classes/templates/${id}`, {
-      method: 'DELETE',
-    });
-  }
+	async createClassTemplate(template: any) {
+		return this.request<any>("/api/classes/templates", {
+			method: "POST",
+			body: JSON.stringify(template),
+		});
+	}
 
-  // Coaches API
-  async getCoaches(specialty?: string) {
-    const searchParams = new URLSearchParams();
-    if (specialty) searchParams.set('specialty', specialty);
-    
-    return this.request<any[]>(`/api/coaches?${searchParams}`);
-  }
+	async updateClassTemplate(id: string, template: any) {
+		return this.request<any>(`/api/classes/templates/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(template),
+		});
+	}
 
-  async getCoach(id: string) {
-    return this.request<any>(`/api/coaches/${id}`);
-  }
+	async deleteClassTemplate(id: string) {
+		return this.request<{ success: boolean }>(`/api/classes/templates/${id}`, {
+			method: "DELETE",
+		});
+	}
 
-  async createCoach(coach: any) {
-    return this.request<any>('/api/coaches', {
-      method: 'POST',
-      body: JSON.stringify(coach),
-    });
-  }
+	// Coaches API
+	async getCoaches(specialty?: string) {
+		const searchParams = new URLSearchParams();
+		if (specialty) searchParams.set("specialty", specialty);
 
-  async updateCoach(id: string, coach: any) {
-    return this.request<any>(`/api/coaches/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(coach),
-    });
-  }
+		return this.request<any[]>(`/api/coaches?${searchParams}`);
+	}
 
-  async deleteCoach(id: string) {
-    return this.request<{ success: boolean }>(`/api/coaches/${id}`, {
-      method: 'DELETE',
-    });
-  }
+	async getCoach(id: string) {
+		return this.request<any>(`/api/coaches/${id}`);
+	}
 
-  async getCoachBookedSessions(id: string) {
-    return this.request<any[]>(`/api/coaches/${id}/booked-sessions`);
-  }
+	async createCoach(coach: any) {
+		return this.request<any>("/api/coaches", {
+			method: "POST",
+			body: JSON.stringify(coach),
+		});
+	}
 
-  async addCoachBookedSession(id: string, session: any) {
-    return this.request<any>(`/api/coaches/${id}/booked-sessions`, {
-      method: 'POST',
-      body: JSON.stringify(session),
-    });
-  }
+	async updateCoach(id: string, coach: any) {
+		return this.request<any>(`/api/coaches/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(coach),
+		});
+	}
 
-  async getAllCoachBookedSessions() {
-    return this.request<any[]>('/api/coaches/booked-sessions');
-  }
+	async deleteCoach(id: string) {
+		return this.request<{ success: boolean }>(`/api/coaches/${id}`, {
+			method: "DELETE",
+		});
+	}
 
-  // Membership Plans API
-  async getMembershipPlans() {
-    return this.request<any[]>('/api/membership-plans');
-  }
+	async getCoachBookedSessions(id: string) {
+		return this.request<any[]>(`/api/coaches/${id}/booked-sessions`);
+	}
 
-  async getMembershipPlan(id: string) {
-    return this.request<any>(`/api/membership-plans/${id}`);
-  }
+	async addCoachBookedSession(id: string, session: any) {
+		return this.request<any>(`/api/coaches/${id}/booked-sessions`, {
+			method: "POST",
+			body: JSON.stringify(session),
+		});
+	}
 
-  async createMembershipPlan(plan: any) {
-    return this.request<any>('/api/membership-plans', {
-      method: 'POST',
-      body: JSON.stringify(plan),
-    });
-  }
+	async getAllCoachBookedSessions() {
+		return this.request<any[]>("/api/coaches/booked-sessions");
+	}
 
-  async updateMembershipPlan(id: string, plan: any) {
-    return this.request<any>(`/api/membership-plans/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(plan),
-    });
-  }
+	async getCoachBookedSessionsRange(startDate: string, endDate: string) {
+		return this.request<any[]>(
+			`/api/coaches/booked-sessions-range?startDate=${startDate}&endDate=${endDate}`
+		);
+	}
 
-  async deleteMembershipPlan(id: string) {
-    return this.request<any>(`/api/membership-plans/${id}`, {
-      method: 'DELETE',
-    });
-  }
+	// Membership Plans API
+	async getMembershipPlans() {
+		return this.request<any[]>("/api/membership-plans");
+	}
 
-  // Shop API
-  async getProductCategories() {
-    return this.request<any>(`/api/shop/categories`, {
-      method: 'GET',
-    });
-  }
+	async getMembershipPlan(id: string) {
+		return this.request<any>(`/api/membership-plans/${id}`);
+	}
 
-  async getProducts(params?: {
-    query?: string;
-    categoryId?: string;
-    inStock?: boolean;
-    sort?: string;
-    page?: number;
-    limit?: number;
-  }) {
-    return this.request<any>(`/api/shop/products?page=${params?.page}&size=${params?.limit}&categoryId=${params?.categoryId}&inStock=${params?.inStock}&sort=${params?.sort}`, {
-      method: 'GET',
-    });
-  }
+	async createMembershipPlan(plan: any) {
+		return this.request<any>("/api/membership-plans", {
+			method: "POST",
+			body: JSON.stringify(plan),
+		});
+	}
 
-  async getProduct(id: string) {
-    return this.request<any>(`/api/shop/products/${id}`);
-  }
+	async updateMembershipPlan(id: string, plan: any) {
+		return this.request<any>(`/api/membership-plans/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(plan),
+		});
+	}
 
-  async createProduct(product: any) {
-    return this.request<any>('/api/shop/products', {
-      method: 'POST',
-      body: JSON.stringify(product),
-    });
-  }
+	async deleteMembershipPlan(id: string) {
+		return this.request<any>(`/api/membership-plans/${id}`, {
+			method: "DELETE",
+		});
+	}
 
-  async updateProduct(id: string, product: any) {
-    return this.request<any>(`/api/shop/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(product),
-    });
-  }
+	// Shop API
+	async getProductCategories() {
+		return this.request<any>(`/api/shop/categories`, {
+			method: "GET",
+		});
+	}
 
-  async deleteProduct(id: string) {
-    return this.request<{ success: boolean }>(`/api/shop/products/${id}`, {
-      method: 'DELETE',
-    });
-  }
+	async getProducts(params?: {
+		query?: string;
+		categoryId?: string;
+		inStock?: boolean;
+		sort?: string;
+		page?: number;
+		limit?: number;
+	}) {
+		return this.request<any>(
+			`/api/shop/products?page=${params?.page}&size=${params?.limit}&categoryId=${params?.categoryId}&inStock=${params?.inStock}&sort=${params?.sort}`,
+			{
+				method: "GET",
+			}
+		);
+	}
 
-  async createCart(userId: string, items: any[]) {
-    return this.request<any>('/api/shop/cart', {
-      method: 'POST',
-      body: JSON.stringify({ userId, items }),
-    });
-  }
+	async getProduct(id: string) {
+		return this.request<any>(`/api/shop/products/${id}`);
+	}
 
-  async getWhatsAppConfig() {
-    return this.request<{ phoneE164: string; template?: string }>('/api/shop/whatsapp-config');
-  }
+	async createProduct(product: any) {
+		return this.request<any>("/api/shop/products", {
+			method: "POST",
+			body: JSON.stringify(product),
+		});
+	}
 
-  // User API
-  async getProfile() {
-    return this.request<any>('/api/me');
-  }
+	async updateProduct(id: string, product: any) {
+		return this.request<any>(`/api/shop/products/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(product),
+		});
+	}
 
-  async getUserBookings() {
-    return this.request<any[]>('/api/me/bookings');
-  }
+	async deleteProduct(id: string) {
+		return this.request<{ success: boolean }>(`/api/shop/products/${id}`, {
+			method: "DELETE",
+		});
+	}
 
-  async getUserOrders() {
-    return this.request<any[]>('/api/me/orders');
-  }
+	async createCart(userId: string, items: any[]) {
+		return this.request<any>("/api/shop/cart", {
+			method: "POST",
+			body: JSON.stringify({ userId, items }),
+		});
+	}
 
-  // Admin API
-  async adminListContent(locale = 'en') {
-    return this.request<any[]>(`/api/admin/content?locale=${locale}`);
-  }
+	async getWhatsAppConfig() {
+		return this.request<{ phoneE164: string; template?: string }>(
+			"/api/shop/whatsapp-config"
+		);
+	}
 
-  async adminListDisciplines() {
-    return this.request<any[]>('/api/admin/disciplines');
-  }
+	// User API
+	async getProfile() {
+		return this.request<any>("/api/me");
+	}
 
-  async adminListClassTemplates() {
-    return this.request<any[]>('/api/admin/class-templates');
-  }
+	async updateProfile(data: { name?: string; phone?: string }) {
+		return this.request<any>("/api/me", {
+			method: "PUT",
+			body: JSON.stringify(data),
+		});
+	}
 
-  async adminListProductCategories() {
-    return this.request<any[]>('/api/admin/product-categories');
-  }
+	async getUserBookings() {
+		return this.request<any[]>("/api/me/bookings");
+	}
+
+	async getUserOrders() {
+		return this.request<any[]>("/api/me/orders");
+	}
+
+	// Admin API
+	async adminListContent(locale = "en") {
+		return this.request<any[]>(`/api/admin/content?locale=${locale}`);
+	}
+
+	async adminListDisciplines() {
+		return this.request<any[]>("/api/admin/disciplines");
+	}
+
+	async adminListClassTemplates() {
+		return this.request<any[]>("/api/admin/class-templates");
+	}
+
+	async adminListProductCategories() {
+		return this.request<any[]>("/api/admin/product-categories");
+	}
+
+	// Evaluations
+	async getMyEvaluations(): Promise<Evaluation[]> {
+		return (await this.request<Evaluation[]>("/api/evaluations/me")).data;
+	}
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

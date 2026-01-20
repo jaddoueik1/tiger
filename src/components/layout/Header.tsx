@@ -64,12 +64,12 @@ export default function Header() {
                                 )}
                             </button>
 
-                            {/* {isAuthenticated ? (
+                            {isAuthenticated ? (
                                 <div className="flex items-center space-x-4">
                                     <Link href="/account" className="p-2 text-gray-700 hover:text-primary transition-colors">
                                         <User className="w-5 h-5" />
                                     </Link>
-                                    <span className="text-sm text-gray-600">Hi, {user?.name}</span>
+                                    <span className="text-sm text-gray-600 hidden xl:block">Hi, {user?.name?.split(' ')[0]}</span>
                                 </div>
                             ) : (
                                 <>
@@ -79,11 +79,11 @@ export default function Header() {
                                     >
                                         Sign In
                                     </Link>
-                                    <Link href={cta.href} className="btn-primary">
+                                    <Link href={cta.href} className="btn-primary hidden sm:block">
                                         {cta.label}
                                     </Link>
                                 </>
-                            )} */}
+                            )}
                         </div>
 
                         {/* Mobile menu button */}

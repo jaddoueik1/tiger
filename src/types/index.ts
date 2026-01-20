@@ -8,7 +8,9 @@ export interface User {
 	credits: number;
 	defaultPaymentMethod?: string;
 	createdAt: Date;
+	createdAt: Date;
 	updatedAt: Date;
+	enrolledClassTemplates?: ClassTemplate[];
 }
 
 export enum UserRole {
