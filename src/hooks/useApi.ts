@@ -72,7 +72,7 @@ export const useClassSessions = (filters?: {
 			if (!startDate || !endDate) return Promise.resolve({ data: [] });
 			return apiClient.getCoachBookedSessionsRange(
 				startDate.toISOString(),
-				endDate.toISOString()
+				endDate.toISOString(),
 			);
 		},
 		staleTime: 5 * 60 * 1000,
@@ -85,7 +85,7 @@ export const useClassSessions = (filters?: {
 	// Apply other filters if necessary (backend handles date range & private filtering)
 	if (disciplineId) {
 		filteredSessions = filteredSessions.filter(
-			(session: any) => session.disciplineId === disciplineId
+			(session: any) => session.disciplineId === disciplineId,
 		);
 	}
 
@@ -118,6 +118,31 @@ export const useCoachBookedSessions = (id: string) => {
 		queryFn: () => apiClient.getCoachBookedSessions(id),
 		staleTime: 5 * 60 * 1000,
 		enabled: !!id,
+	});
+};
+
+export const useCoachSessions = (
+	id: string,
+	startDate?: Date,
+	endDate?: Date,
+) => {
+	return useQuery({
+		queryKey: [
+			"coach-sessions",
+			id,
+			startDate?.toISOString(),
+			endDate?.toISOString(),
+		],
+		queryFn: () => {
+			if (!id || !startDate || !endDate) return Promise.resolve({ data: [] });
+			return apiClient.getCoachSessionsInRange(
+				id,
+				startDate.toISOString(),
+				endDate.toISOString(),
+			);
+		},
+		staleTime: 5 * 60 * 1000,
+		enabled: !!id && !!startDate && !!endDate,
 	});
 };
 
@@ -283,7 +308,7 @@ export function buildWhatsAppMessage(
 		itemsText: string;
 		total: string;
 		currency: string;
-	}
+	},
 ) {
 	const fallback =
 		`Hello, I'd like to place an order.\n\n` +
@@ -348,8 +373,8 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
 				.map(
 					(it) =>
 						`• ${it.name} × ${it.quantity} — ${(it.price * it.quantity).toFixed(
-							2
-						)} ${currency}`
+							2,
+						)} ${currency}`,
 				)
 				.join("\n");
 
@@ -367,7 +392,7 @@ export function useWhatsAppOrder(opts?: UseWhatsAppOrderOptions) {
 
 			const phoneDigits = onlyDigitsPhone(config.phoneE164);
 			const waUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(
-				message
+				message,
 			)}`;
 
 			(
@@ -465,7 +490,7 @@ ${
 
 			const phoneDigits = config.phoneE164.replace(/[^\d]/g, "");
 			const whatsappUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(
-				message
+				message,
 			)}`;
 
 			window.open(whatsappUrl, "_blank", "noopener,noreferrer");

@@ -1,4 +1,4 @@
-const isProd = true;
+const isProd = false;
 const API_BASE_URL = isProd
 	? "https://api.tigermuaythai.me"
 	: "http://localhost:3001";
@@ -49,7 +49,7 @@ class ApiClient {
 
 	private async request<T>(
 		endpoint: string,
-		options: RequestInit = {}
+		options: RequestInit = {},
 	): Promise<ApiResponse<T>> {
 		const url = `${this.baseUrl}${endpoint}`;
 
@@ -156,7 +156,7 @@ class ApiClient {
 			`/api/classes/disciplines/${id}`,
 			{
 				method: "DELETE",
-			}
+			},
 		);
 	}
 
@@ -241,7 +241,17 @@ class ApiClient {
 
 	async getCoachBookedSessionsRange(startDate: string, endDate: string) {
 		return this.request<any[]>(
-			`/api/coaches/booked-sessions-range?startDate=${startDate}&endDate=${endDate}`
+			`/api/coaches/booked-sessions-range?startDate=${startDate}&endDate=${endDate}`,
+		);
+	}
+
+	async getCoachSessionsInRange(
+		id: string,
+		startDate: string,
+		endDate: string,
+	) {
+		return this.request<any[]>(
+			`/api/coaches/${id}/sessions?startDate=${startDate}&endDate=${endDate}`,
 		);
 	}
 
@@ -293,7 +303,7 @@ class ApiClient {
 			`/api/shop/products?page=${params?.page}&size=${params?.limit}&categoryId=${params?.categoryId}&inStock=${params?.inStock}&sort=${params?.sort}`,
 			{
 				method: "GET",
-			}
+			},
 		);
 	}
 
@@ -330,7 +340,7 @@ class ApiClient {
 
 	async getWhatsAppConfig() {
 		return this.request<{ phoneE164: string; template?: string }>(
-			"/api/shop/whatsapp-config"
+			"/api/shop/whatsapp-config",
 		);
 	}
 

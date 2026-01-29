@@ -1,12 +1,12 @@
 'use client';
 
-import Button from '@/components/ui/Button';
-import Head from 'next/head';
-import { useCoaches, useWhatsAppOrder } from '@/hooks/useApi';
-import { usePrivateSessionBooking } from '@/hooks/useApi';
+import CoachCalendarModal from '@/components/CoachCalendarModal';
 import PrivateSessionBookingModal, { BookingFormData } from '@/components/PrivateSessionBookingModal';
+import Button from '@/components/ui/Button';
+import { useCoachBookedSessions, useCoaches, usePrivateSessionBooking } from '@/hooks/useApi';
 import { motion } from 'framer-motion';
-import { Award, Instagram } from 'lucide-react';
+import { Award, Calendar, Instagram } from 'lucide-react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -16,9 +16,21 @@ export default function CoachesPage() {
     const [selectedCoach, setSelectedCoach] = useState<any>(null);
     const [bookingModalOpen, setBookingModalOpen] = useState(false);
 
+    // Calendar state
+    const [calendarCoachId, setCalendarCoachId] = useState<string | null>(null);
+    const [calendarCoachName, setCalendarCoachName] = useState<string>('');
+
+    const { data: sessionsData } = useCoachBookedSessions(calendarCoachId || '');
+    const bookedSessions = sessionsData?.data || [];
+
     const handleBookPrivate = (coach: any) => {
         setSelectedCoach(coach);
         setBookingModalOpen(true);
+    };
+
+    const handleViewSchedule = (coach: any) => {
+        setCalendarCoachId(coach.id);
+        setCalendarCoachName(coach.name);
     };
 
     useEffect(() => {
@@ -168,16 +180,18 @@ export default function CoachesPage() {
                                     )}
 
                                     {/* Actions */}
-                                    <div className="flex space-x-3">
-                                        <Link href={`/coaches/${coach._id}`} className="flex-1">
-                                            <Button variant="primary" size="sm" className="w-full">
-                                                View Profile
-                                            </Button>
-                                        </Link>
-                                        <div className="flex-1">
-                                            <Button variant="outline" onClick={() => handleBookPrivate(coach)} size="sm" className="w-full">
-                                                Book Private
-                                            </Button>
+                                    <div className="flex flex-col space-y-2">
+                                        <div className="flex space-x-3">
+                                            <Link href={`/coaches/${coach._id}`} className="flex-1">
+                                                <Button variant="primary" size="sm" className="w-full">
+                                                    View Profile
+                                                </Button>
+                                            </Link>
+                                            <div className="flex-1">
+                                                <Button variant="outline" onClick={() => handleBookPrivate(coach)} size="sm" className="w-full">
+                                                    Book Private
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -202,6 +216,15 @@ export default function CoachesPage() {
                         ))}
                     </div>
                 </div>
+
+                {/* Calendar Modal */}
+                <CoachCalendarModal
+                    isOpen={!!calendarCoachId}
+                    onClose={() => setCalendarCoachId(null)}
+                    coachId={calendarCoachId || ''}
+                    coachName={calendarCoachName}
+                    bookedSessions={bookedSessions}
+                />
 
                 {/* Private Session Booking Modal */}
                 {selectedCoach && (
